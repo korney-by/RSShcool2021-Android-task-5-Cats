@@ -8,17 +8,17 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:theme="@style/Toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:paddingBottom="4dp"
+        android:layout_height="wrap_content"
         android:elevation="8dp"
+        android:paddingBottom="4dp"
+        android:theme="@style/Toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/main_toolbar"
-        app:title="123rghrhrhr"
-        />
+        app:menu="@menu/menu_main_toolbar"
+        app:navigationIcon="@drawable/ic_baseline_menu_24"
+        app:title="@string/app_name" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"

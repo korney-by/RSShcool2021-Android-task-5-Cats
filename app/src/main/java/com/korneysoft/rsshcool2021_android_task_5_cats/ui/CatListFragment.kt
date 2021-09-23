@@ -1,27 +1,23 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
-import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ListCatFragmentBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.placeholder.PlaceholderContent
-import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
+import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.placeholder.PlaceholderContent
+import android.util.DisplayMetrics
 
-/**
- * A fragment representing a list of Items.
- */
+
 class CatListFragment : Fragment() {
-    private var _binding: ListCatFragmentBinding? = null
+    private var _binding: FragmentCatListBinding? = null
     private val binding get() = _binding!!
-
-    private val viewModel: CatViewModel by activityViewModels()
 
     private var columnCount = 2
 
@@ -36,19 +32,11 @@ class CatListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_cat_list, container, false)
+    ): View {
+        _binding = FragmentCatListBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = CatListRecyclerViewAdapter(PlaceholderContent.ITEMS)
-            }
-        }
+        setupRecycleViewSettings()
         return view
     }
 
@@ -57,8 +45,31 @@ class CatListFragment : Fragment() {
         _binding = null
     }
 
-    companion object {
+    private fun setupRecycleViewSettings() {
+        binding.catListRecyclerView.apply {
+            layoutManager = if (columnCount <= 1) LinearLayoutManager(context)
+            else GridLayoutManager(context, columnCount)
 
+            val holderSize = (getWidthDisplay() / columnCount).toInt()
+            adapter = CatListRecyclerViewAdapter(PlaceholderContent.ITEMS, holderSize)
+        }
+    }
+
+    private fun getWidthDisplay(): Int {
+        activity?.let { activity ->
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                activity.windowManager.currentWindowMetrics.bounds.width()
+            } else {
+                val displayMetrics = DisplayMetrics()
+                @Suppress("DEPRECATION")
+                activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                displayMetrics.widthPixels
+            }
+        }
+        return 0
+    }
+
+    companion object {
         // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 

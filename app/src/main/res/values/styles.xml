@@ -5,8 +5,7 @@
         <item name="android:layout_height">?attr/actionBarSize</item>
         <!-- <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
         <item name="android:background">?attr/colorPrimary</item>
+        <item name="colorControlNormal">@color/icons</item>
+        <item name="android:textColorPrimary">@color/icons</item>
     </style>
-
-
-
 </resources>

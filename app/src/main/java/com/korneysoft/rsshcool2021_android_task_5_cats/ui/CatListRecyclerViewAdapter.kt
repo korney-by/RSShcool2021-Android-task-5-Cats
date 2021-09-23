@@ -1,18 +1,20 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+
+import com.korneysoft.rsshcool2021_android_task_5_cats.placeholder.PlaceholderContent.PlaceholderItem
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.placeholder.PlaceholderContent.PlaceholderItem
 
 /**
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].
  * TODO: Replace the implementation with code for your data type.
  */
 class CatListRecyclerViewAdapter(
-    private val values: List<PlaceholderItem>
+    private val cats: List<PlaceholderItem>,
+    private val holderSize: Int
 ) : RecyclerView.Adapter<CatListRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,20 +30,28 @@ class CatListRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = values[position]
-        holder.idView.text = item.id
-        holder.contentView.text = item.content
+        val cat: PlaceholderItem = cats[position]
+        holder.bind(cat, holderSize)
     }
 
-    override fun getItemCount(): Int = values.size
+    override fun getItemCount(): Int = cats.size
 
-    inner class ViewHolder(binding: FragmentCatBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: FragmentCatBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         val idView: TextView = binding.itemNumber
-        val contentView: TextView = binding.content
 
-        override fun toString(): String {
-            return super.toString() + " '" + contentView.text + "'"
+        fun bind(cat: PlaceholderItem, holderSize: Int) {
+            binding.itemNumber.text = cat.content
+
+            binding.imageView.minimumWidth = holderSize
+            binding.imageView.maxWidth = holderSize
+            binding.imageView.minimumHeight = holderSize
+            binding.imageView.maxHeight = holderSize
         }
+
+//        override fun toString(): String {
+//            return super.toString() + " '" + contentView.text + "'"
+//        }
     }
 
 }

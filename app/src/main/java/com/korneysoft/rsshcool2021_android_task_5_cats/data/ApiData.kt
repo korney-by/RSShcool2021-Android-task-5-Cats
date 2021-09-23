@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ApiData(
-    @Json(name = "") val catsData: List<CatData>
+    @Json(name = "results") val results: List<CatData>,
 )
 
 @JsonClass(generateAdapter = true)
@@ -15,4 +15,3 @@ data class CatData(
     @Json(name = "width") val width: String?,
     @Json(name = "height") val height: String?
 )
-

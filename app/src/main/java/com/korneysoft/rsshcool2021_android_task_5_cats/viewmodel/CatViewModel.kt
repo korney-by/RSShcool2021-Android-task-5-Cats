@@ -1,9 +1,10 @@
-package com.korneysoft.rsshcool2021_android_task_5_cats
+package com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.korneysoft.rsshcool2021_android_task_5_cats.TheCatApiImpl
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import kotlinx.coroutines.launch
 
@@ -13,7 +14,7 @@ class CatViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _items.value=TheCatApiImpl.getListOfCats()
+            _items.value = TheCatApiImpl.getListOfCats()
         }
     }
 }

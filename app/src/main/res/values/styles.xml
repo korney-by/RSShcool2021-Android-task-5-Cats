@@ -8,4 +8,5 @@
         <item name="colorControlNormal">@color/icons</item>
         <item name="android:textColorPrimary">@color/icons</item>
     </style>
+
 </resources>

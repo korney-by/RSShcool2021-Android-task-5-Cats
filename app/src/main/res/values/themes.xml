@@ -45,6 +45,7 @@
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/primaryColor</item>
+        <item name="android:navigationBarColor">@color/backgroundLoadAnimation</item>
     </style>
 
 

@@ -59,6 +59,22 @@ class CatListFragment : Fragment() {
         }
     }
 
+    private fun hideLoadAnimation() {
+        binding.imageViewBackground.apply {
+            if (visibility != View.GONE) visibility = View.GONE
+        }
+    }
+
+    private fun showCatsRecyclerView() {
+        activity.apply {
+            if (this is NavigationBarColor) setNavigationBarColor()
+        }
+
+        binding.catListRecyclerView.apply {
+            if (visibility != View.VISIBLE) visibility = View.VISIBLE
+        }
+    }
+
     private fun setRecycleViewSettings() {
         binding.catListRecyclerView.apply {
             layoutManager = if (columnCount <= 1) LinearLayoutManager(context)
@@ -81,12 +97,10 @@ class CatListFragment : Fragment() {
     }
 
     private fun updateUI(items: List<Cat>) {
-        binding.apply {
-            if (catListRecyclerView.visibility != View.VISIBLE) {
-                catListRecyclerView.visibility = View.VISIBLE
-                imageViewBackground.visibility = View.GONE
-            }
-            (catListRecyclerView.adapter as CatListRecyclerViewAdapter).update(items)
+        showCatsRecyclerView()
+        hideLoadAnimation()
+        binding.catListRecyclerView.adapter.apply {
+            if (this is CatListRecyclerViewAdapter) update(items)
         }
     }
 

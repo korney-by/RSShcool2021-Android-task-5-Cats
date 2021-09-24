@@ -4,12 +4,13 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),NavigationBarColor {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +32,10 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)
             .commit()
+    }
+
+    override fun setNavigationBarColor(){
+        window.navigationBarColor = ContextCompat.getColor(this,R.color.primaryColor)
     }
 
 }

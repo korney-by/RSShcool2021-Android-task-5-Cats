@@ -2,22 +2,25 @@ package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.korneysoft.rsshcool2021_android_task_5_cats.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.placeholder.PlaceholderContent
-import android.util.DisplayMetrics
+import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
 
 class CatListFragment : Fragment() {
     private var _binding: FragmentCatListBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: CatViewModel by activityViewModels()
 
     private var columnCount = 2
 
@@ -36,7 +39,8 @@ class CatListFragment : Fragment() {
         _binding = FragmentCatListBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        setupRecycleViewSettings()
+        setRecycleViewSettings()
+        registerObserverItems()
         return view
     }
 
@@ -45,14 +49,28 @@ class CatListFragment : Fragment() {
         _binding = null
     }
 
-    private fun setupRecycleViewSettings() {
+    private fun setRecycleViewSettings() {
         binding.catListRecyclerView.apply {
             layoutManager = if (columnCount <= 1) LinearLayoutManager(context)
             else GridLayoutManager(context, columnCount)
 
             val holderSize = (getWidthDisplay() / columnCount).toInt()
-            adapter = CatListRecyclerViewAdapter(PlaceholderContent.ITEMS, holderSize)
+            adapter = CatListRecyclerViewAdapter(holderSize)
         }
+    }
+
+    private fun registerObserverItems() {
+        activity?.let { activity ->
+            viewModel.items.observe(activity,
+                Observer {
+                    it ?: return@Observer
+                    updateUI(it)
+                })
+        }
+    }
+
+    private fun updateUI(items: List<Cat>) {
+        (binding.catListRecyclerView.adapter as CatListRecyclerViewAdapter).update(items)
     }
 
     private fun getWidthDisplay(): Int {

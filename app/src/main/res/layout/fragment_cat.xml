@@ -9,12 +9,22 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@xml/border"
+        android:background="@xml/canvas"
         tools:srcCompat="@tools:sample/avatars"
         tools:ignore="MissingConstraints" />
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@xml/canvas"
+        android:alpha="0.4"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
-        android:id="@+id/item_number"
+        android:id="@+id/text_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
@@ -26,7 +36,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView" />
 
-<!--    <TextView-->
+    <TextView
+        android:id="@+id/text_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/primaryTextColor"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+
+    <!--    <TextView-->
 <!--        android:id="@+id/content"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->

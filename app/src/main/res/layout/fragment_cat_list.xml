@@ -10,7 +10,7 @@
         android:id="@+id/imageView_background"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/black_cat"
+        android:background="@color/backgroundLoadAnimation"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/catListRecyclerView"
         app:layout_constraintEnd_toEndOf="@+id/catListRecyclerView"

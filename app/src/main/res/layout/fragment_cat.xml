@@ -9,7 +9,7 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@xml/canvas"
+        android:background="@color/primaryLightColor"
         tools:srcCompat="@tools:sample/avatars"
         tools:ignore="MissingConstraints" />
 
@@ -17,7 +17,7 @@
         android:id="@+id/view"
         android:layout_width="0dp"
         android:layout_height="30dp"
-        android:background="@xml/canvas"
+        android:background="@color/primaryLightColor"
         android:alpha="0.4"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"

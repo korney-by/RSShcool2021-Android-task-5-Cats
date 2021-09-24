@@ -62,13 +62,13 @@ class CatListRecyclerViewAdapter(
             }
         }
         private fun setTextHolder(cat:Cat){
-//            cat.imageUrl ?: binding.textLoading="Yt yfqltyj"
             binding.textLoading.visibility= View.GONE
             binding.textSize.text = "${cat.width} x ${cat.height}"
         }
 
         private fun loadImage(imageView: ImageView, cat:Cat) {
             cat.imageUrl ?: return
+
             val options = RequestOptions()
             options.centerCrop()
 
@@ -97,7 +97,6 @@ class CatListRecyclerViewAdapter(
                     }
                 })
                 .into(imageView)
-
         }
 
         private fun setSizeImageView(imageView: ImageView, size: Int) {

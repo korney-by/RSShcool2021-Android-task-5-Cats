@@ -11,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
@@ -39,6 +41,8 @@ class CatListFragment : Fragment() {
         _binding = FragmentCatListBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        showLoadAnimation()
+
         setRecycleViewSettings()
         registerObserverItems()
         return view
@@ -47,6 +51,12 @@ class CatListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showLoadAnimation() {
+        if (binding.imageViewBackground.visibility == View.VISIBLE) {
+            Glide.with(this).asGif().load(R.raw.black_cat).into(binding.imageViewBackground);
+        }
     }
 
     private fun setRecycleViewSettings() {
@@ -64,13 +74,20 @@ class CatListFragment : Fragment() {
             viewModel.items.observe(activity,
                 Observer {
                     it ?: return@Observer
+                    _binding ?: return@Observer
                     updateUI(it)
                 })
         }
     }
 
     private fun updateUI(items: List<Cat>) {
-        (binding.catListRecyclerView.adapter as CatListRecyclerViewAdapter).update(items)
+        binding.apply {
+            if (catListRecyclerView.visibility != View.VISIBLE) {
+                catListRecyclerView.visibility = View.VISIBLE
+                imageViewBackground.visibility = View.GONE
+            }
+            (catListRecyclerView.adapter as CatListRecyclerViewAdapter).update(items)
+        }
     }
 
     private fun getWidthDisplay(): Int {

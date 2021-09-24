@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/catListRecyclerView"
-    android:name="com.korneysoft.rsshcool2021_android_task_5_cats.CatListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="0dp"
-    android:layout_marginRight="0dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".ui.CatListFragment"
-    tools:listitem="@layout/fragment_cat" />
+    android:background="@color/backgroundLoadAnimation">
+
+    <ImageView
+        android:id="@+id/imageView_background"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/catListRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/catListRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/catListRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/catListRecyclerView"
+        />
+<!--    android:src="@drawable/black_cat"-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/catListRecyclerView"
+        android:name="com.korneysoft.rsshcool2021_android_task_5_cats.CatListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:background="@color/primaryLightColor"
+        android:visibility="gone"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.CatListFragment"
+        tools:listitem="@layout/fragment_cat"
+        tools:visibility="gone" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

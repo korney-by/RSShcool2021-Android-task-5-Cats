@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Task 5 - Cats</string>
+    <string name="loading_text">loading...</string>
 </resources>

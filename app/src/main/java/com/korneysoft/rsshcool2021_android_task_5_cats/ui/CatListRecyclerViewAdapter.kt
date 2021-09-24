@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import com.korneysoft.rsshcool2021_android_task_5_cats.R
 
 import com.korneysoft.rsshcool2021_android_task_5_cats.placeholder.PlaceholderContent.PlaceholderItem
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatBinding
@@ -41,7 +42,8 @@ class CatListRecyclerViewAdapter(
         val idView: TextView = binding.itemNumber
 
         fun bind(cat: PlaceholderItem, holderSize: Int) {
-            binding.itemNumber.text = cat.content
+            binding.itemNumber.text = "${cat.id}"
+                //cat.content
 
             binding.imageView.minimumWidth = holderSize
             binding.imageView.maxWidth = holderSize

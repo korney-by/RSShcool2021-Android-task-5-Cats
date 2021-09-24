@@ -17,14 +17,16 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
 
-<!--    <color name="primaryColor">#ffccbc</color>-->
-<!--    <color name="primaryLightColor">#ffffee</color>-->
-<!--    <color name="primaryDarkColor">#cb9b8c</color>-->
-<!--    <color name="secondaryColor">#ffab91</color>-->
-<!--    <color name="secondaryLightColor">#ffddc1</color>-->
-<!--    <color name="secondaryDarkColor">#c97b63</color>-->
-<!--    <color name="primaryTextColor">#795548</color>-->
-<!--    <color name="secondaryTextColor">#5d4037</color>-->
+    <color name="primaryColor">#111D29</color>
+    <color name="primaryLightColor">#2E3C49</color>
+    <color name="primaryDarkColor">#00000e</color>
+    <color name="secondaryColor">#2154AD</color>
+    <color name="secondaryLightColor">#FFEB3C</color>
+    <color name="secondaryDarkColor">#28323E</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#485C70</color>
+
+
 
 
 <!--    <color name="light_blue_100">#4FC3F7</color>-->

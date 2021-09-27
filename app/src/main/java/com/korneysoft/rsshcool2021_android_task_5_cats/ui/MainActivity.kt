@@ -16,7 +16,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 class MainActivity : AppCompatActivity(), NavigationBarColor {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: CatViewModel by viewModels()
-    private val screenSettings by lazy { ScreenSettings() }
+    private val gridSettings by lazy { GridSettings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
 
     private fun loadCatListFragment() {
         val fragment: Fragment =
-            CatListFragment.newInstance(screenSettings.columnCount, screenSettings.cellSize)
+            CatListFragment.newInstance(gridSettings.columnCount, gridSettings.cellSize)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)
@@ -67,33 +67,31 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.primaryColor)
     }
 
-    inner class ScreenSettings() {
-        private var _width: Int = 0
-        private var _height: Int = 0
-        private var _columnCount: Int = 0
-        private var _cellSize: Int = 0
-
-        val columnCount get() = _columnCount
-        val cellSize get() = _cellSize
+    inner class GridSettings() {
+        val columnCount: Int
+        val cellSize: Int
 
         init {
+            val width: Int
+            val height: Int
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                _width = this@MainActivity.windowManager.currentWindowMetrics.bounds.width()
-                _height = this@MainActivity.windowManager.currentWindowMetrics.bounds.height()
+                width = this@MainActivity.windowManager.currentWindowMetrics.bounds.width()
+                height = this@MainActivity.windowManager.currentWindowMetrics.bounds.height()
             } else {
                 val displayMetrics = DisplayMetrics()
                 @Suppress("DEPRECATION")
                 this@MainActivity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                _width = displayMetrics.widthPixels
-                _height = displayMetrics.heightPixels
+                width = displayMetrics.widthPixels
+                height = displayMetrics.heightPixels
             }
 
-            if (_height > _width) {
-                _columnCount = 2
+            if (height > width) {
+                columnCount = 2
             } else {
-                _columnCount = (_width / (_height / 2)).toInt()
+                columnCount = (width / (height / 2)).toInt()
             }
-            _cellSize = _width / _columnCount
+            cellSize = width / columnCount
         }
     }
 

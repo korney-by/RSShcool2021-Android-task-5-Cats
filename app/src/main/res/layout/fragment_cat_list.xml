@@ -29,7 +29,7 @@
         android:visibility="gone"
         app:layoutManager="LinearLayoutManager"
         tools:context=".ui.CatListFragment"
-        tools:listitem="@layout/fragment_cat"
+        tools:listitem="@layout/view_cat"
         tools:visibility="gone" />
 
 

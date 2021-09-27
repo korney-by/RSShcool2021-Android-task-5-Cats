@@ -1,7 +1,6 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.graphics.drawable.Drawable
-import android.opengl.Visibility
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,16 +16,14 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
-import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.placeholder.PlaceholderContent.PlaceholderItem
 
+private val TAG="T5 - CatListRecyclerViewAdapter"
 
-/**
- * [RecyclerView.Adapter] that can display a [PlaceholderItem].
- * TODO: Replace the implementation with code for your data type.
- */
 class CatListRecyclerViewAdapter(
-    private val holderSize: Int
+    private val holderSize: Int,
+    private val onHolderClickListener: (Cat) -> Unit
 ) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
     //RecyclerView.Adapter<CatListRecyclerViewAdapter.ViewHolder>() {
 
@@ -34,13 +31,25 @@ class CatListRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
         return CatHolder(
-            FragmentCatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ViewCatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
-        val cat: Cat = items[position]
+        val cat: Cat = items[position] //getItem(position)
         holder.bind(cat, holderSize)
+
+        setHolderOnClickListener(holder)
+    }
+
+
+    private fun setHolderOnClickListener(holder: CatHolder) {
+        holder.parent.setOnClickListener {
+            holder.cat?.let { cat ->
+                Log.d(TAG, "Cat: ${cat.imageUrl}")
+                onHolderClickListener(cat)
+            }
+        }
     }
 
     override fun getItemCount(): Int = items.size
@@ -51,26 +60,32 @@ class CatListRecyclerViewAdapter(
         //submitList(items)
     }
 
-    inner class CatHolder(private val binding: FragmentCatBinding) :
+
+    inner class CatHolder(private val binding: ViewCatBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private var _cat: Cat? = null
+        val cat get() = _cat
+        val parent = binding.root
+
         fun bind(cat: Cat, holderSize: Int) {
+            _cat = cat
             binding.apply {
                 setSizeImageView(imageView, holderSize)
                 loadImage(imageView, cat)
-
             }
         }
-        private fun setTextHolder(cat:Cat){
-            binding.textLoading.visibility= View.GONE
+
+        private fun setTextHolder(cat: Cat) {
+            binding.textLoading.visibility = View.GONE
             binding.textSize.text = "${cat.width} x ${cat.height}"
         }
 
-        private fun loadImage(imageView: ImageView, cat:Cat) {
+        private fun loadImage(imageView: ImageView, cat: Cat) {
             cat.imageUrl ?: return
 
-            val options = RequestOptions()
-            options.centerCrop()
+//            val options = RequestOptions()
+//            options.centerCrop()
 
             Glide.with(imageView.context)
                 .load(cat.imageUrl)

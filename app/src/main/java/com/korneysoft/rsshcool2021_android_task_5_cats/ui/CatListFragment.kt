@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.interfaces.ShowFragmentInterface
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
 
@@ -42,7 +43,6 @@ class CatListFragment : Fragment() {
         val view = binding.root
 
         showLoadAnimation()
-
         setRecycleViewSettings()
         registerObserverItems()
         return view
@@ -55,7 +55,11 @@ class CatListFragment : Fragment() {
 
     private fun showLoadAnimation() {
         if (binding.imageViewBackground.visibility == View.VISIBLE) {
-            Glide.with(this).asGif().load(R.raw.black_cat).into(binding.imageViewBackground);
+            Glide
+                .with(this)
+                .asGif()
+                .load(R.raw.black_cat)
+                .into(binding.imageViewBackground);
         }
     }
 
@@ -81,7 +85,7 @@ class CatListFragment : Fragment() {
             else GridLayoutManager(context, columnCount)
 
             val holderSize = (getWidthDisplay() / columnCount).toInt()
-            adapter = CatListRecyclerViewAdapter(holderSize)
+            adapter = CatListRecyclerViewAdapter(holderSize) { onClickOnCat(it) }
         }
     }
 
@@ -93,6 +97,14 @@ class CatListFragment : Fragment() {
                     _binding ?: return@Observer
                     updateUI(it)
                 })
+        }
+    }
+
+    private fun onClickOnCat(cat: Cat) {
+        cat.imageUrl?.let { url ->
+            activity.apply {
+                if (this is ShowFragmentInterface) showCatDetailsFragment(url)
+            }
         }
     }
 

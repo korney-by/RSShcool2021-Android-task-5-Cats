@@ -6,11 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.interfaces.ShowFragmentInterface
+import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
-class MainActivity : AppCompatActivity(),NavigationBarColor {
+class MainActivity : AppCompatActivity(), NavigationBarColor, ShowFragmentInterface {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +35,22 @@ class MainActivity : AppCompatActivity(),NavigationBarColor {
             .commit()
     }
 
-    override fun setNavigationBarColor(){
-        window.navigationBarColor = ContextCompat.getColor(this,R.color.primaryColor)
+    private fun loadCatDetailsFragment(photoUrl:String) {
+        val fragment: Fragment = CatDetailsFragment.newInstance(photoUrl)
+        supportFragmentManager
+            .beginTransaction()
+            .addToBackStack(null)
+            .replace(R.id.fragmentContainerView, fragment)
+            .commit()
+    }
+
+
+    override fun setNavigationBarColor() {
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.primaryColor)
+    }
+
+    override fun showCatDetailsFragment(photoUrl:String){
+        loadCatDetailsFragment(photoUrl)
     }
 
 }

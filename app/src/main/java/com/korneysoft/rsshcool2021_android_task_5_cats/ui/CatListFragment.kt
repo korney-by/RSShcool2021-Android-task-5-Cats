@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.interfaces.ShowFragmentInterface
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
 
@@ -102,9 +101,7 @@ class CatListFragment : Fragment() {
 
     private fun onClickOnCat(cat: Cat) {
         cat.imageUrl?.let { url ->
-            activity.apply {
-                if (this is ShowFragmentInterface) showCatDetailsFragment(url)
-            }
+            viewModel.setUrlShowingCat(url)
         }
     }
 

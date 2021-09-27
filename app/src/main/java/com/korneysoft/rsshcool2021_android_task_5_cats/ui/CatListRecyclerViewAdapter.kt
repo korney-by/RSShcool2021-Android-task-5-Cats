@@ -17,7 +17,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.placeholder.PlaceholderContent.PlaceholderItem
 
 private val TAG="T5 - CatListRecyclerViewAdapter"
 

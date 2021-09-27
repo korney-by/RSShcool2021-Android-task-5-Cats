@@ -22,7 +22,6 @@ class CatDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setRetainInstance(true)
 
         arguments?.let {
             photoUrl = it.getString(PHOTO_ID)
@@ -58,7 +57,6 @@ class CatDetailsFragment : Fragment() {
             .load(url)
             .into(binding.imageView)
     }
-
 
 
     companion object {

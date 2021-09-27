@@ -6,13 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.interfaces.ShowFragmentInterface
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
-class MainActivity : AppCompatActivity(), NavigationBarColor, ShowFragmentInterface {
+class MainActivity : AppCompatActivity(), NavigationBarColor {
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: CatViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +23,17 @@ class MainActivity : AppCompatActivity(), NavigationBarColor, ShowFragmentInterf
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val viewModel: CatViewModel by viewModels()
-
+        registerObserverShowingCat()
         loadCatListFragment()
+
+    }
+
+    private fun registerObserverShowingCat() {
+        viewModel.getUrlShowingCat().observe(this,
+            Observer {
+                it ?: return@Observer
+                loadCatDetailsFragment(it)
+            })
     }
 
     private fun loadCatListFragment() {
@@ -35,7 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationBarColor, ShowFragmentInterf
             .commit()
     }
 
-    private fun loadCatDetailsFragment(photoUrl:String) {
+    private fun loadCatDetailsFragment(photoUrl: String) {
         val fragment: Fragment = CatDetailsFragment.newInstance(photoUrl)
         supportFragmentManager
             .beginTransaction()
@@ -44,13 +53,15 @@ class MainActivity : AppCompatActivity(), NavigationBarColor, ShowFragmentInterf
             .commit()
     }
 
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0)
+            viewModel.setUrlShowingCat(null)
+        super.onBackPressed()
+    }
+
 
     override fun setNavigationBarColor() {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.primaryColor)
-    }
-
-    override fun showCatDetailsFragment(photoUrl:String){
-        loadCatDetailsFragment(photoUrl)
     }
 
 }

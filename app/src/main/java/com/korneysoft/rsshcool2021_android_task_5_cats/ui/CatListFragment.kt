@@ -24,13 +24,15 @@ class CatListFragment : Fragment() {
 
     private val viewModel: CatViewModel by activityViewModels()
 
-    private var columnCount = 2
+    private var columnCount = 0
+    private var holderSize = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
+            holderSize=it.getInt(ARG_HOLDER_SIZE)
         }
     }
 
@@ -80,10 +82,12 @@ class CatListFragment : Fragment() {
 
     private fun setRecycleViewSettings() {
         binding.catListRecyclerView.apply {
+            //columnCount = screenSettings.columnCount
             layoutManager = if (columnCount <= 1) LinearLayoutManager(context)
             else GridLayoutManager(context, columnCount)
 
-            val holderSize = (getWidthDisplay() / columnCount).toInt()
+            //val holderSize = (getWidthDisplay() / co lumnCount).toInt()
+            //val holderSize = screenSettings.holderSize
             adapter = CatListRecyclerViewAdapter(holderSize) { onClickOnCat(it) }
         }
     }
@@ -113,30 +117,16 @@ class CatListFragment : Fragment() {
         }
     }
 
-    private fun getWidthDisplay(): Int {
-        activity?.let { activity ->
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                activity.windowManager.currentWindowMetrics.bounds.width()
-            } else {
-                val displayMetrics = DisplayMetrics()
-                @Suppress("DEPRECATION")
-                activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                displayMetrics.widthPixels
-            }
-        }
-        return 0
-    }
-
     companion object {
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
+        const val ARG_COLUMN_COUNT = "ARG_COLUMN_COUNT"
+        const val ARG_HOLDER_SIZE = "ARG_HOLDER_SIZE"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int = 2) =
+        fun newInstance(columnCount: Int, holderSize: Int) =
             CatListFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
+                    putInt(ARG_HOLDER_SIZE, holderSize)
                 }
             }
     }

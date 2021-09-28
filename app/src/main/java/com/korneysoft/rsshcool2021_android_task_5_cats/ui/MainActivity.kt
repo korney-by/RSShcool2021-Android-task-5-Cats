@@ -32,12 +32,17 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
     }
 
     private fun registerObserverShowingCat() {
-        viewModel.getUrlShowingCat().observe(this,
+        viewModel.getPositionShowingCat().observe(this,
             Observer {
                 it ?: return@Observer
-                loadCatDetailsFragment(it)
+                     loadCatDetailsFragment()
             })
     }
+
+    private fun isCatDetailsFragmentHide(): Boolean {
+        return (supportFragmentManager.findFragmentById(R.id.cat_details_fragment)==null)
+    }
+
 
     private fun loadCatListFragment() {
         val fragment: Fragment =
@@ -46,10 +51,11 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
             .beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)
             .commit()
+
     }
 
-    private fun loadCatDetailsFragment(photoUrl: String) {
-        val fragment: Fragment = CatDetailsFragment.newInstance(photoUrl)
+    private fun loadCatDetailsFragment() {
+        val fragment: Fragment = CatDetailsFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
             .addToBackStack(null)
@@ -58,9 +64,9 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0)
-            viewModel.setUrlShowingCat(null)
         super.onBackPressed()
+        if (supportFragmentManager.backStackEntryCount == 0)
+            viewModel.setShowingCat(null)
     }
 
     override fun setNavigationBarColor() {

@@ -1,8 +1,6 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
-import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
@@ -32,7 +29,7 @@ class CatListFragment : Fragment() {
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
-            holderSize=it.getInt(ARG_HOLDER_SIZE)
+            holderSize = it.getInt(ARG_HOLDER_SIZE)
         }
     }
 
@@ -49,9 +46,35 @@ class CatListFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        showCurrentCat()
+    }
+
+
     override fun onDestroyView() {
+        saveVisiblePosition()
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showCurrentCat() {
+        viewModel.lastShowingCat?.let {
+            if (!isCatPositionVisible(it)) {
+                binding.catListRecyclerView.scrollToPosition(it)
+            }
+        }
+    }
+
+    private fun saveVisiblePosition() {
+        (binding.catListRecyclerView.layoutManager as GridLayoutManager).let {
+            viewModel.firstGridVisiblePosition = it.findFirstCompletelyVisibleItemPosition()
+            viewModel.lastGridVisiblePosition = it.findLastCompletelyVisibleItemPosition()
+        }
+    }
+
+    private fun isCatPositionVisible(position: Int): Boolean {
+        return position in viewModel.firstGridVisiblePosition..viewModel.lastGridVisiblePosition
     }
 
     private fun showLoadAnimation() {
@@ -82,12 +105,8 @@ class CatListFragment : Fragment() {
 
     private fun setRecycleViewSettings() {
         binding.catListRecyclerView.apply {
-            //columnCount = screenSettings.columnCount
-            layoutManager = if (columnCount <= 1) LinearLayoutManager(context)
-            else GridLayoutManager(context, columnCount)
-
-            //val holderSize = (getWidthDisplay() / co lumnCount).toInt()
-            //val holderSize = screenSettings.holderSize
+            layoutManager = GridLayoutManager(context, columnCount)
+            //if (columnCount <= 1) LinearLayoutManager(context)  else GridLayoutManager(context, columnCount)
             adapter = CatListRecyclerViewAdapter(holderSize) { onClickOnCat(it) }
         }
     }
@@ -103,9 +122,9 @@ class CatListFragment : Fragment() {
         }
     }
 
-    private fun onClickOnCat(cat: Cat) {
-        cat.imageUrl?.let { url ->
-            viewModel.setUrlShowingCat(url)
+    private fun onClickOnCat(index: Int?) {
+        index?.let {
+            viewModel.setShowingCat(it)
         }
     }
 

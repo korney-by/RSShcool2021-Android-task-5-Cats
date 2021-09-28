@@ -18,15 +18,16 @@ import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
 
-private val TAG="T5 - CatListRecyclerViewAdapter"
+private const val TAG = "T5 - CatListRVAdapter"
 
 class CatListRecyclerViewAdapter(
     private val holderSize: Int,
-    private val onHolderClickListener: (Cat) -> Unit
+    private val onHolderClickListener: (Int) -> Unit
 ) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
     //RecyclerView.Adapter<CatListRecyclerViewAdapter.ViewHolder>() {
 
-    private var items = mutableListOf<Cat>()
+    //private var items = mutableListOf<Cat>()
+    private var itemsSize = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
         return CatHolder(
@@ -35,40 +36,48 @@ class CatListRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
-        val cat: Cat = items[position] //getItem(position)
-        holder.bind(cat, holderSize)
+        //val cat: Cat = items[position] //getItem(position)
+        val cat: Cat = getItem(position)
+        holder.bind(cat, holderSize, position)
 
         setHolderOnClickListener(holder)
     }
 
-
     private fun setHolderOnClickListener(holder: CatHolder) {
         holder.parent.setOnClickListener {
-            holder.cat?.let { cat ->
-                Log.d(TAG, "Cat: ${cat.imageUrl}")
-                onHolderClickListener(cat)
+            holder.position?.let { it ->
+                Log.d(TAG, "Cat position at List : $it")
+                onHolderClickListener(it)
             }
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int {
+        //items.size
+        return itemsSize
+    }
 
     fun update(newItems: List<Cat>) {
-        items.addAll(newItems)
-        notifyDataSetChanged()
-        //submitList(items)
+        submitList(newItems)
+        itemsSize = newItems.size
+        //items.addAll(newItems)
+        //notifyDataSetChanged()
     }
 
 
     inner class CatHolder(private val binding: ViewCatBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private var _cat: Cat? = null
-        val cat get() = _cat
+        private var cat: Cat? = null
+        private var _position: Int? = null
+        val position get() = _position
+        //val cat get() = _cat
+
         val parent = binding.root
 
-        fun bind(cat: Cat, holderSize: Int) {
-            _cat = cat
+        fun bind(cat: Cat, holderSize: Int,position:Int) {
+            _position=position
+            this.cat = cat
             binding.apply {
                 setSizeImageView(imageView, holderSize)
                 loadImage(imageView, cat)
@@ -82,9 +91,6 @@ class CatListRecyclerViewAdapter(
 
         private fun loadImage(imageView: ImageView, cat: Cat) {
             cat.imageUrl ?: return
-
-//            val options = RequestOptions()
-//            options.centerCrop()
 
             Glide.with(imageView.context)
                 .load(cat.imageUrl)

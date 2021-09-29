@@ -13,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_cat_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RSShcool2021Androidtask5Cats.DarkBlue">
+        <!--        android:configChanges="orientation|keyboardHidden"-->
 
         <activity
             android:name=".ui.MainActivity"

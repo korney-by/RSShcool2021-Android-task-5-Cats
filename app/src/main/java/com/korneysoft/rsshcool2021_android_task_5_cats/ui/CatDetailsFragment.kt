@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -12,17 +13,16 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatDetailsBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
-private const val PHOTO_ID = "PHOTO_ID"
 private val TAG = "T5-CatDetailsFragment"
 
 class CatDetailsFragment : Fragment() {
     private var _binding: FragmentCatDetailsBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel: CatViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -34,13 +34,18 @@ class CatDetailsFragment : Fragment() {
 
         setViewPagerSettings()
         registerObserverItems()
-        setCurrentPosition()
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showCatAtCurrentPosition()
     }
 
     override fun onDestroy() {
@@ -55,16 +60,33 @@ class CatDetailsFragment : Fragment() {
             registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
-                    viewModel.lastShowingCat=position
+                    setLastShowingCat(position)
                 }
             })
         }
     }
 
-    private fun setCurrentPosition(){
-        viewModel.getPositionShowingCat().value?.let { position ->
-            binding.catViewPager2.setCurrentItem(position,false)
+    private fun setLastShowingCat(position:Int){
+        viewModel.lastShowingCat = position
+    }
+
+    private fun showCatAtCurrentPosition() {
+        getCurrentPosition()?.let { position ->
+            binding.catViewPager2.setCurrentItem(position, false)
         }
+    }
+
+    private fun getCurrentPosition(): Int? {
+        // for set to cerrent position on rotate
+        viewModel.lastShowingCat?.let {
+            return it
+        }
+
+        //for set to current position from grid
+//        viewModel.getPositionShowingCat().value?.let {
+//            return it
+//        }
+        return null
     }
 
     private fun registerObserverItems() {
@@ -87,7 +109,7 @@ class CatDetailsFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() =
+        fun newInstance()=
             CatDetailsFragment()
     }
 }

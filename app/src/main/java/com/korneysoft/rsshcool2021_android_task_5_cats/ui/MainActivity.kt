@@ -16,7 +16,8 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 class MainActivity : AppCompatActivity(), NavigationBarColor {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: CatViewModel by viewModels()
-    private val gridSettings by lazy { GridSettings() }
+
+    private var isRecoveryAfterRotate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,40 +28,43 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
         setContentView(binding.root)
 
         registerObserverShowingCat()
-        loadCatListFragment()
-
+        if (savedInstanceState == null) {
+            loadCatListFragment()
+        }
     }
+
 
     private fun registerObserverShowingCat() {
         viewModel.getPositionShowingCat().observe(this,
             Observer {
                 it ?: return@Observer
-                     loadCatDetailsFragment()
+                loadCatDetailsFragment(it)
+                viewModel.setShowingCat(null)
             })
     }
 
     private fun isCatDetailsFragmentHide(): Boolean {
-        return (supportFragmentManager.findFragmentById(R.id.cat_details_fragment)==null)
+        return (supportFragmentManager.findFragmentById(R.id.cat_details_fragment) == null)
     }
 
 
     private fun loadCatListFragment() {
         val fragment: Fragment =
-            CatListFragment.newInstance(gridSettings.columnCount, gridSettings.cellSize)
+            CatListFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)
             .commit()
-
     }
 
-    private fun loadCatDetailsFragment() {
-        val fragment: Fragment = CatDetailsFragment.newInstance()
-        supportFragmentManager
-            .beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.fragmentContainerView, fragment)
-            .commit()
+    private fun loadCatDetailsFragment(position:Int) {
+            viewModel.lastShowingCat=position
+            val fragment: Fragment = CatDetailsFragment.newInstance()
+            supportFragmentManager
+                .beginTransaction()
+                .addToBackStack("CatDetailsFragment")
+                .replace(R.id.fragmentContainerView, fragment)
+                .commit()
     }
 
     override fun onBackPressed() {
@@ -72,33 +76,4 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
     override fun setNavigationBarColor() {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.primaryColor)
     }
-
-    inner class GridSettings() {
-        val columnCount: Int
-        val cellSize: Int
-
-        init {
-            val width: Int
-            val height: Int
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                width = this@MainActivity.windowManager.currentWindowMetrics.bounds.width()
-                height = this@MainActivity.windowManager.currentWindowMetrics.bounds.height()
-            } else {
-                val displayMetrics = DisplayMetrics()
-                @Suppress("DEPRECATION")
-                this@MainActivity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                width = displayMetrics.widthPixels
-                height = displayMetrics.heightPixels
-            }
-
-            if (height > width) {
-                columnCount = 2
-            } else {
-                columnCount = (width / (height / 2)).toInt()
-            }
-            cellSize = width / columnCount
-        }
-    }
-
 }

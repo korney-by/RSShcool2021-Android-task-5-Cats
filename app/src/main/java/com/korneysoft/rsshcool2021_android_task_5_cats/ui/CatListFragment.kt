@@ -1,6 +1,8 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 class CatListFragment : Fragment() {
     private var _binding: FragmentCatListBinding? = null
     private val binding get() = _binding!!
+    private val gridSettings by lazy { GridSettings() }
 
     private val viewModel: CatViewModel by activityViewModels()
 
@@ -28,9 +31,10 @@ class CatListFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-            holderSize = it.getInt(ARG_HOLDER_SIZE)
+//            columnCount = it.getInt(ARG_COLUMN_COUNT)
+//            holderSize = it.getInt(ARG_HOLDER_SIZE)
         }
+
     }
 
     override fun onCreateView(
@@ -39,6 +43,9 @@ class CatListFragment : Fragment() {
     ): View {
         _binding = FragmentCatListBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        columnCount = gridSettings.columnCount
+        holderSize = gridSettings.cellSize
 
         showLoadAnimation()
         setRecycleViewSettings()
@@ -141,12 +148,48 @@ class CatListFragment : Fragment() {
         const val ARG_HOLDER_SIZE = "ARG_HOLDER_SIZE"
 
         @JvmStatic
-        fun newInstance(columnCount: Int, holderSize: Int) =
-            CatListFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                    putInt(ARG_HOLDER_SIZE, holderSize)
-                }
-            }
+        fun newInstance() = CatListFragment()
+
+
+//        fun newInstance(columnCount: Int, holderSize: Int) =
+//            CatListFragment().apply {
+//                arguments = Bundle().apply {
+//                    putInt(ARG_COLUMN_COUNT, columnCount)
+//                    putInt(ARG_HOLDER_SIZE, holderSize)
+//                }
+//            }
     }
+
+    inner class GridSettings() {
+        private var _columnCount: Int = 0
+        private var _cellSize: Int = 0
+
+        val columnCount: Int get() = _columnCount
+        val cellSize: Int get() = _cellSize
+
+        init {
+            val width: Int
+            val height: Int
+            activity?.let { activity ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    width = activity.windowManager.currentWindowMetrics.bounds.width()
+                    height = activity.windowManager.currentWindowMetrics.bounds.height()
+                } else {
+                    val displayMetrics = DisplayMetrics()
+                    @Suppress("DEPRECATION")
+                    activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                    width = displayMetrics.widthPixels
+                    height = displayMetrics.heightPixels
+                }
+
+                if (height > width) {
+                    _columnCount = 2
+                } else {
+                    _columnCount = (width / (height / 2)).toInt()
+                }
+                _cellSize = width / _columnCount
+            }
+        }
+    }
+
 }

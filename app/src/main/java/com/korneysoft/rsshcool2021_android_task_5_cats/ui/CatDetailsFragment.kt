@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -22,11 +21,11 @@ class CatDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCatDetailsBinding.inflate(inflater, container, false)
@@ -40,7 +39,6 @@ class CatDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onResume() {
@@ -60,13 +58,13 @@ class CatDetailsFragment : Fragment() {
             registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
-                    setLastShowingCat(position)
+                    saveLastShowingCat(position)
                 }
             })
         }
     }
 
-    private fun setLastShowingCat(position:Int){
+    private fun saveLastShowingCat(position: Int) {
         viewModel.lastShowingCat = position
     }
 
@@ -77,16 +75,7 @@ class CatDetailsFragment : Fragment() {
     }
 
     private fun getCurrentPosition(): Int? {
-        // for set to cerrent position on rotate
-        viewModel.lastShowingCat?.let {
-            return it
-        }
-
-        //for set to current position from grid
-//        viewModel.getPositionShowingCat().value?.let {
-//            return it
-//        }
-        return null
+        return viewModel.lastShowingCat
     }
 
     private fun registerObserverItems() {
@@ -106,10 +95,9 @@ class CatDetailsFragment : Fragment() {
         }
     }
 
-
     companion object {
         @JvmStatic
-        fun newInstance()=
+        fun newInstance() =
             CatDetailsFragment()
     }
 }

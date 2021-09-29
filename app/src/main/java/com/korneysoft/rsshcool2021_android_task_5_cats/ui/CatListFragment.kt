@@ -16,7 +16,6 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
-
 class CatListFragment : Fragment() {
     private var _binding: FragmentCatListBinding? = null
     private val binding get() = _binding!!
@@ -34,11 +33,11 @@ class CatListFragment : Fragment() {
 //            columnCount = it.getInt(ARG_COLUMN_COUNT)
 //            holderSize = it.getInt(ARG_HOLDER_SIZE)
         }
-
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCatListBinding.inflate(inflater, container, false)
@@ -57,7 +56,6 @@ class CatListFragment : Fragment() {
         super.onResume()
         showCurrentCat()
     }
-
 
     override fun onDestroyView() {
         saveVisiblePosition()
@@ -90,7 +88,7 @@ class CatListFragment : Fragment() {
                 .with(this)
                 .asGif()
                 .load(R.raw.black_cat)
-                .into(binding.imageViewBackground);
+                .into(binding.imageViewBackground)
         }
     }
 
@@ -113,7 +111,6 @@ class CatListFragment : Fragment() {
     private fun setRecycleViewSettings() {
         binding.catListRecyclerView.apply {
             layoutManager = GridLayoutManager(context, columnCount)
-            //if (columnCount <= 1) LinearLayoutManager(context)  else GridLayoutManager(context, columnCount)
             adapter = CatListRecyclerViewAdapter(holderSize) { onClickOnCat(it) }
         }
     }
@@ -149,7 +146,6 @@ class CatListFragment : Fragment() {
 
         @JvmStatic
         fun newInstance() = CatListFragment()
-
 
 //        fun newInstance(columnCount: Int, holderSize: Int) =
 //            CatListFragment().apply {
@@ -191,5 +187,4 @@ class CatListFragment : Fragment() {
             }
         }
     }
-
 }

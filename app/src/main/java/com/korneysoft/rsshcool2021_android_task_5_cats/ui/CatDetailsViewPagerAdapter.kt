@@ -12,7 +12,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatDetail
 
 class CatDetailsViewPagerAdapter() :
     ListAdapter<Cat, CatDetailsViewPagerAdapter.PagerHolder>(itemComparator) {
-    //RecyclerView.Adapter<CatDetailsViewPagerAdapter.PagerVH>() {
+    // RecyclerView.Adapter<CatDetailsViewPagerAdapter.PagerVH>() {
 
     private var itemsSize = 0
 
@@ -29,14 +29,14 @@ class CatDetailsViewPagerAdapter() :
 
     override fun getItemCount(): Int {
         return itemsSize
-        //items.size
+        // items.size
     }
 
     fun update(newItems: List<Cat>) {
         itemsSize = newItems.size
         submitList(newItems)
-        //items.addAll(newItems)
-        //notifyDataSetChanged()
+        // items.addAll(newItems)
+        // notifyDataSetChanged()
     }
 
     inner class PagerHolder(private val binding: ViewCatDetailsBinding) :
@@ -67,5 +67,4 @@ class CatDetailsViewPagerAdapter() :
                 oldItem == newItem
         }
     }
-
 }

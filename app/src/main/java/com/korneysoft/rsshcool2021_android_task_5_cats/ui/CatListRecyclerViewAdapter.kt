@@ -24,9 +24,9 @@ class CatListRecyclerViewAdapter(
     private val holderSize: Int,
     private val onHolderClickListener: (Int) -> Unit
 ) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
-    //RecyclerView.Adapter<CatListRecyclerViewAdapter.ViewHolder>() {
+    // RecyclerView.Adapter<CatListRecyclerViewAdapter.ViewHolder>() {
 
-    //private var items = mutableListOf<Cat>()
+    // private var items = mutableListOf<Cat>()
     private var itemsSize = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
@@ -36,7 +36,7 @@ class CatListRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
-        //val cat: Cat = items[position] //getItem(position)
+        // val cat: Cat = items[position] //getItem(position)
         val cat: Cat = getItem(position)
         holder.bind(cat, holderSize, position)
 
@@ -53,17 +53,16 @@ class CatListRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int {
-        //items.size
+        // items.size
         return itemsSize
     }
 
     fun update(newItems: List<Cat>) {
         submitList(newItems)
         itemsSize = newItems.size
-        //items.addAll(newItems)
-        //notifyDataSetChanged()
+        // items.addAll(newItems)
+        // notifyDataSetChanged()
     }
-
 
     inner class CatHolder(private val binding: ViewCatBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -71,12 +70,11 @@ class CatListRecyclerViewAdapter(
         private var cat: Cat? = null
         private var _position: Int? = null
         val position get() = _position
-        //val cat get() = _cat
 
         val parent = binding.root
 
-        fun bind(cat: Cat, holderSize: Int,position:Int) {
-            _position=position
+        fun bind(cat: Cat, holderSize: Int, position: Int) {
+            _position = position
             this.cat = cat
             binding.apply {
                 setSizeImageView(imageView, holderSize)
@@ -125,7 +123,6 @@ class CatListRecyclerViewAdapter(
             imageView.minimumHeight = size
             imageView.maxHeight = size
         }
-
     }
 
     companion object {

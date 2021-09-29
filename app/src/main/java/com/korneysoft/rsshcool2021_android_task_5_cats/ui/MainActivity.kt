@@ -1,8 +1,6 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
-import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -21,7 +19,7 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //TODO("NIGHT Theme")
+        // TODO("NIGHT Theme")
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -32,7 +30,6 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
             loadCatListFragment()
         }
     }
-
 
     private fun registerObserverShowingCat() {
         viewModel.getPositionShowingCat().observe(this,
@@ -47,7 +44,6 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
         return (supportFragmentManager.findFragmentById(R.id.cat_details_fragment) == null)
     }
 
-
     private fun loadCatListFragment() {
         val fragment: Fragment =
             CatListFragment.newInstance()
@@ -57,14 +53,14 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
             .commit()
     }
 
-    private fun loadCatDetailsFragment(position:Int) {
-            viewModel.lastShowingCat=position
-            val fragment: Fragment = CatDetailsFragment.newInstance()
-            supportFragmentManager
-                .beginTransaction()
-                .addToBackStack("CatDetailsFragment")
-                .replace(R.id.fragmentContainerView, fragment)
-                .commit()
+    private fun loadCatDetailsFragment(position: Int) {
+        viewModel.lastShowingCat = position
+        val fragment: Fragment = CatDetailsFragment.newInstance()
+        supportFragmentManager
+            .beginTransaction()
+            .addToBackStack("CatDetailsFragment")
+            .replace(R.id.fragmentContainerView, fragment)
+            .commit()
     }
 
     override fun onBackPressed() {

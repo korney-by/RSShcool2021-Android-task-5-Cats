@@ -11,7 +11,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
-class MainActivity : AppCompatActivity(), NavigationBarColor {
+class MainActivity : AppCompatActivity(), SetNavigationBarColor {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: CatViewModel by viewModels()
 
@@ -55,12 +55,23 @@ class MainActivity : AppCompatActivity(), NavigationBarColor {
 
     private fun loadCatDetailsFragment(position: Int) {
         viewModel.lastShowingCat = position
-        val fragment: Fragment = CatDetailsFragment.newInstance()
-        supportFragmentManager
-            .beginTransaction()
-            .addToBackStack("CatDetailsFragment")
-            .replace(R.id.fragmentContainerView, fragment)
-            .commit()
+//        val fragment: Fragment = CatDetailsFragment.newInstance()
+//        supportFragmentManager
+//            .beginTransaction()
+//            .setReorderingAllowed(true)
+//            .addSharedElement(imageView, imageView.getTransitionName())
+//            .replace(R.id.fragmentContainerView, fragment,CatDetailsFragment.javaClass.simpleName)
+//            .addToBackStack(CatDetailsFragment.javaClass.simpleName)
+//            .commit()
+
+//        viewModel.lastShowingCat = position
+//        val fragment: Fragment = CatDetailsFragment.newInstance()
+//        supportFragmentManager
+//            .beginTransaction()
+//            .addToBackStack("CatDetailsFragment")
+//            .replace(R.id.fragmentContainerView, fragment)
+//            .commit()
+
     }
 
     override fun onBackPressed() {

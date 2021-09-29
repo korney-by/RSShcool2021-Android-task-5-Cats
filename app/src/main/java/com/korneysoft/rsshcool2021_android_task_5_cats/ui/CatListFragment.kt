@@ -6,6 +6,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -15,6 +16,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
+
 
 class CatListFragment : Fragment() {
     private var _binding: FragmentCatListBinding? = null
@@ -49,6 +51,26 @@ class CatListFragment : Fragment() {
         showLoadAnimation()
         setRecycleViewSettings()
         registerObserverItems()
+
+
+        setExitSharedElementCallback(
+            object : SharedElementCallback() {
+                override fun onMapSharedElements(
+                    names: List<String?>, sharedElements: MutableMap<String?, View?>
+                ) {
+                    // Locate the ViewHolder for the clicked position.
+                    viewModel.lastShowingCat?.let { position ->
+                        val view = getView(position)
+                        view?.let { view ->
+                            // Map the first shared element name to the child ImageView.
+                            sharedElements[names[0]] = view//.findViewById(R.id.cat_card)
+                        }
+                    }
+                }
+            }
+        )
+
+
         return view
     }
 
@@ -62,6 +84,31 @@ class CatListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun getView(position: Int): View? {
+        val holder = binding.catListRecyclerView.findViewHolderForAdapterPosition(position)
+        return holder?.itemView
+    }
+
+    private fun ShowDetailsFragment_TMP(position: Int) {
+        val fragment: Fragment = CatDetailsFragment.newInstance()
+        activity?.supportFragmentManager?.let { fragmentManager ->
+            getView(position)?.let { view ->
+                fragmentManager
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .addSharedElement(view, view.transitionName)
+                    .replace(
+                        R.id.fragmentContainerView,
+                        fragment,
+                        CatDetailsFragment.javaClass.simpleName
+                    )
+                    .addToBackStack(CatDetailsFragment.javaClass.simpleName)
+                    .commit()
+            }
+        }
+    }
+
 
     private fun showCurrentCat() {
         viewModel.lastShowingCat?.let {
@@ -100,7 +147,7 @@ class CatListFragment : Fragment() {
 
     private fun showCatsRecyclerView() {
         activity.apply {
-            if (this is NavigationBarColor) setNavigationBarColor()
+            if (this is SetNavigationBarColor) setNavigationBarColor()
         }
 
         binding.catListRecyclerView.apply {
@@ -126,11 +173,13 @@ class CatListFragment : Fragment() {
         }
     }
 
-    private fun onClickOnCat(index: Int?) {
-        index?.let {
-            viewModel.setShowingCat(it)
+    private fun onClickOnCat(position: Int?) {
+        position?.let { position ->
+            viewModel.setShowingCat(position)
+            ShowDetailsFragment_TMP(position)
         }
     }
+
 
     private fun updateUI(items: List<Cat>) {
         showCatsRecyclerView()

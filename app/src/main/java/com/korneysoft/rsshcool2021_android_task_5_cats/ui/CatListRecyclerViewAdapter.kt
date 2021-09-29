@@ -76,7 +76,9 @@ class CatListRecyclerViewAdapter(
         fun bind(cat: Cat, holderSize: Int, position: Int) {
             _position = position
             this.cat = cat
+
             binding.apply {
+                itemView.transitionName = cat.imageUrl
                 setSizeImageView(imageView, holderSize)
                 loadImage(imageView, cat)
             }

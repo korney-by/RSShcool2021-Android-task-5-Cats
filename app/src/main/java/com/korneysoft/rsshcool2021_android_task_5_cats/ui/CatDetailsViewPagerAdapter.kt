@@ -1,20 +1,26 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatDetailsBinding
 
-class CatDetailsViewPagerAdapter() :
+class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) :
     ListAdapter<Cat, CatDetailsViewPagerAdapter.PagerHolder>(itemComparator) {
-    // RecyclerView.Adapter<CatDetailsViewPagerAdapter.PagerVH>() {
 
-    private var itemsSize = 0
+    //private var itemsSize = 0
+    private val items = mutableListOf<Cat>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerHolder {
         return PagerHolder(
@@ -28,15 +34,15 @@ class CatDetailsViewPagerAdapter() :
     }
 
     override fun getItemCount(): Int {
-        return itemsSize
-        // items.size
+        //return itemsSize
+        return items.size
     }
 
     fun update(newItems: List<Cat>) {
-        itemsSize = newItems.size
-        submitList(newItems)
-        // items.addAll(newItems)
-        // notifyDataSetChanged()
+        //itemsSize = newItems.size
+        //submitList(newItems)
+         items.addAll(newItems)
+         notifyDataSetChanged()
     }
 
     inner class PagerHolder(private val binding: ViewCatDetailsBinding) :
@@ -44,6 +50,7 @@ class CatDetailsViewPagerAdapter() :
 
         fun bind(cat: Cat) {
             binding.apply {
+                itemView.transitionName = cat.imageUrl
                 showCat(imageViewDetail, cat)
             }
         }
@@ -52,6 +59,28 @@ class CatDetailsViewPagerAdapter() :
             Glide
                 .with(imageView.context)
                 .load(cat.imageUrl)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        getParentFragment().startPostponedEnterTransition();
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        getParentFragment().startPostponedEnterTransition();
+                        return false
+                    }
+                })
                 .into(imageView)
         }
     }

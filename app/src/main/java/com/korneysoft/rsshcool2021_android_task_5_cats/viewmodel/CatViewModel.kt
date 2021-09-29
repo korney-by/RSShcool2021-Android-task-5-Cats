@@ -26,9 +26,8 @@ class CatViewModel : ViewModel() {
     }
 
     fun setShowingCat(index: Int?) {
+        //lastShowingCat = index
         showingCat.value = index
-
-        // lastShowingCat = index
     }
 
     fun getPositionShowingCat(): LiveData<Int?> = showingCat

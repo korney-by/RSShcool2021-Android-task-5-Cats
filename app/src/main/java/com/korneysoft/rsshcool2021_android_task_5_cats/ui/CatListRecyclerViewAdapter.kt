@@ -1,7 +1,6 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,36 +59,41 @@ class CatListRecyclerViewAdapter(
     }
 
 
-    inner class CatHolder(private val binding: ViewCatBinding, private val onCatListener: OnCatListener) :
+    inner class CatHolder(
+        private val binding: ViewCatBinding,
+        private val onCatListener: OnCatListener
+    ) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-
-        private var cat: Cat? = null
-        private var _position: Int? = null
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(p0: View?) {
-            onCatListener.onCatClick(adapterPosition)
+            onCatListener.onCatClick(bindingAdapterPosition)
         }
 
         fun bind(cat: Cat, holderSize: Int, position: Int) {
-            _position = position
-            this.cat = cat
 
             binding.apply {
-                imageView.transitionName = cat.imageUrl
-                imageView.tag = cat.id
+                setContentHolder(imageView,null)
                 setSizeImageView(imageView, holderSize)
-
                 loadImage(imageView, cat)
             }
         }
 
-        private fun setTextHolder(cat: Cat) {
-            binding.textLoading.visibility = View.GONE
-            binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
+        private fun setContentHolder(view: View,cat: Cat?) {
+            if (cat == null) {
+                view.transitionName = null
+                view.tag = null
+                binding.textLoading.visibility = View.VISIBLE
+                binding.textSize.text = null
+            } else {
+                view.transitionName = cat.imageUrl
+                view.tag = cat.id
+                binding.textLoading.visibility = View.GONE
+                binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
+            }
         }
 
         private fun loadImage(imageView: ImageView, cat: Cat) {
@@ -117,7 +121,7 @@ class CatListRecyclerViewAdapter(
                         p4: Boolean
                     ): Boolean {
                         getParentFragment().startPostponedEnterTransition()
-                        setTextHolder(cat)
+                        setContentHolder(imageView, cat)
                         return false
                     }
                 })

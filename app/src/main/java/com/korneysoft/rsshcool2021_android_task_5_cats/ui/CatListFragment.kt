@@ -64,7 +64,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         binding.catListRecyclerView.adapter = CatListRecyclerViewAdapter(
             holderSize,
             this,
-             { getCurrentFragment() }
+            { getCurrentFragment() }
         )
     }
 
@@ -216,8 +216,8 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     override fun onCatClick(position: Int) {
         Log.d(TAG, "OnClick $position")
-        position?.let {
-            selectedView = getView(position)
+        selectedView = getView(position)
+        if (selectedView!=null) {
             viewModel.setShowingCat(position) { this@CatListFragment }
         }
     }

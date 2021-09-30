@@ -45,10 +45,7 @@ class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) 
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(cat: Cat) {
-
             binding.apply {
-                //itemView.transitionName = cat.imageUrl
-                //itemView.tag=cat.id
                 imageViewDetail.transitionName = cat.imageUrl
                 imageViewDetail.tag=cat.id
                 showCat(imageViewDetail, cat)

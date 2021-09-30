@@ -1,25 +1,19 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.findFragment
 import androidx.lifecycle.Observer
-import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import androidx.viewpager2.widget.ViewPager2
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatDetailsBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
-import kotlin.collections.List
-import kotlin.collections.MutableMap
 import kotlin.collections.set
 
 
@@ -43,29 +37,32 @@ class CatDetailsFragment : Fragment() {
         val view = binding.root
 
         binding.catViewPager2.adapter = CatDetailsViewPagerAdapter { getCurrentFragment() }
-
         registerObserverItems()
         showCatAtCurrentPosition()
-
         binding.catViewPager2.apply {
             registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     saveLastShowingCat(position)
-                    val cat=viewModel.getCatFromPosition(position)
-                    Log.d(TAG,"$cat")
-                    Log.d(TAG,binding.catViewPager2.findViewWithTag<View>(cat?.id).toString())
                 }
             })
         }
 
         prepareSharedElementTransition()
-
-        if (savedInstanceState==null){
+        if (savedInstanceState == null) {
             postponeEnterTransition()
         }
-
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showCatAtCurrentPosition()
     }
 
     private fun prepareSharedElementTransition() {
@@ -90,23 +87,14 @@ class CatDetailsFragment : Fragment() {
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
 
     private fun getView(position: Int): View? {
-        val cat=viewModel.getCatFromPosition(position)
-        return binding.catViewPager2.findViewWithTag(cat?.id)
+        val cat = viewModel.getCatFromPosition(position)
+        return binding.catViewPager2.findViewWithTag<View>(cat?.id)
     }
 
     private fun getCurrentFragment(): Fragment = this

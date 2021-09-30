@@ -1,6 +1,7 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.os.Bundle
+import android.transition.TransitionSet
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -14,8 +15,6 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 class MainActivity : AppCompatActivity(), SetNavigationBarColor {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: CatViewModel by viewModels()
-
-    private var isRecoveryAfterRotate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +34,8 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor {
         viewModel.getPositionShowingCat().observe(this,
             Observer {
                 it ?: return@Observer
-                loadCatDetailsFragment(it)
-                viewModel.setShowingCat(null)
+                loadCatDetailsFragment(it,viewModel.getGridFragment)
+                viewModel.setShowingCat(null) { null }
             })
     }
 
@@ -53,31 +52,30 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor {
             .commit()
     }
 
-    private fun loadCatDetailsFragment(position: Int) {
+    private fun loadCatDetailsFragment(position: Int,sourceFragment:CatListFragment?) {
+        sourceFragment ?: return
         viewModel.lastShowingCat = position
-//        val fragment: Fragment = CatDetailsFragment.newInstance()
-//        supportFragmentManager
-//            .beginTransaction()
-//            .setReorderingAllowed(true)
-//            .addSharedElement(imageView, imageView.getTransitionName())
-//            .replace(R.id.fragmentContainerView, fragment,CatDetailsFragment.javaClass.simpleName)
-//            .addToBackStack(CatDetailsFragment.javaClass.simpleName)
-//            .commit()
+        val destinationFragment: Fragment = CatDetailsFragment.newInstance()
 
-//        viewModel.lastShowingCat = position
-//        val fragment: Fragment = CatDetailsFragment.newInstance()
-//        supportFragmentManager
-//            .beginTransaction()
-//            .addToBackStack("CatDetailsFragment")
-//            .replace(R.id.fragmentContainerView, fragment)
-//            .commit()
+        sourceFragment.getSelectedView()?.let { view ->
+            // Exclude the clicked card from the exit transition (e.g. the card will disappear immediately
+            // instead of fading out with the rest to prevent an overlapping animation of fade and move).
+            sourceFragment.exitTransition?.let { transition ->
+                if (transition is TransitionSet) transition.excludeTarget(view, true)
+            }
+            sourceFragment.parentFragmentManager
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .addSharedElement(view, view.transitionName)
+                .replace(
+                    R.id.fragmentContainerView,
+                    destinationFragment,
+                    CatDetailsFragment.javaClass.simpleName
+                )
+                .addToBackStack(CatDetailsFragment.javaClass.simpleName)
+                .commit()
+        }
 
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if (supportFragmentManager.backStackEntryCount == 0)
-            viewModel.setShowingCat(null)
     }
 
     override fun setNavigationBarColor() {

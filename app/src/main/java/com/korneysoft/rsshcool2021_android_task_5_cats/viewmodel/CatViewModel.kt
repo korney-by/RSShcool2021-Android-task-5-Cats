@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.korneysoft.rsshcool2021_android_task_5_cats.TheCatApiImpl
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.CatListFragment
 import kotlinx.coroutines.launch
 
 class CatViewModel : ViewModel() {
@@ -15,8 +16,8 @@ class CatViewModel : ViewModel() {
     private val showingCat = MutableLiveData<Int?>()
     var lastShowingCat: Int? = null
 
-    var firstGridVisiblePosition: Int = -1
-    var lastGridVisiblePosition: Int = -1
+    private var _getGridFragment: (() -> CatListFragment?)? = null
+    val getGridFragment get() = _getGridFragment?.invoke()
 
     init {
         showingCat.value = null
@@ -25,14 +26,15 @@ class CatViewModel : ViewModel() {
         }
     }
 
-    fun setShowingCat(index: Int?) {
+    fun setShowingCat(index: Int?, getGridFragment: () -> CatListFragment?) {
         //lastShowingCat = index
+        _getGridFragment = getGridFragment
         showingCat.value = index
     }
 
     fun getPositionShowingCat(): LiveData<Int?> = showingCat
 
-    fun getCatFromPosition(position:Int):Cat?{
+    fun getCatFromPosition(position: Int): Cat? {
         return _items.value?.get(position)
     }
 }

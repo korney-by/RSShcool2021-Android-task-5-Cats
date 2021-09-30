@@ -23,7 +23,7 @@ import java.util.*
 
 private const val TAG = "T5-CatListFragment: "
 
-class CatListFragment : Fragment() {
+class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     private var _binding: FragmentCatListBinding? = null
     private val binding get() = _binding!!
     private val gridSettings by lazy { GridSettings() }
@@ -63,8 +63,9 @@ class CatListFragment : Fragment() {
         binding.catListRecyclerView.layoutManager = GridLayoutManager(context, columnCount)
         binding.catListRecyclerView.adapter = CatListRecyclerViewAdapter(
             holderSize,
-            { onClickOnCat(it) },
-            { getCurrentFragment() })
+            this,
+             { getCurrentFragment() }
+        )
     }
 
     private fun prepareTransition() {
@@ -205,19 +206,19 @@ class CatListFragment : Fragment() {
         }
     }
 
-    private fun onClickOnCat(position: Int?) {
-        position?.let {
-            selectedView = getView(position)
-            viewModel.setShowingCat(position) { this@CatListFragment }
-        }
-    }
-
-
     private fun updateUI(items: List<Cat>) {
         showCatsRecyclerView()
         hideLoadAnimation()
         binding.catListRecyclerView.adapter.apply {
             if (this is CatListRecyclerViewAdapter) update(items)
+        }
+    }
+
+    override fun onCatClick(position: Int) {
+        Log.d(TAG, "OnClick $position")
+        position?.let {
+            selectedView = getView(position)
+            viewModel.setShowingCat(position) { this@CatListFragment }
         }
     }
 
@@ -258,4 +259,6 @@ class CatListFragment : Fragment() {
             }
         }
     }
+
+
 }

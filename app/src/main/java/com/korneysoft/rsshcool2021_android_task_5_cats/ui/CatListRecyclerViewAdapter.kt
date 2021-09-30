@@ -23,15 +23,16 @@ private const val TAG = "T5 - CatListRVAdapter"
 
 class CatListRecyclerViewAdapter(
     private val holderSize: Int,
-    private val onHolderClickListener: (Int) -> Unit,
-    private val getParentFragment: () -> Fragment
+    private val onCatListener: OnCatListener,
+    private val getParentFragment: () -> Fragment,
 ) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
 
     private var itemsSize = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
         return CatHolder(
-            ViewCatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ViewCatBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            onCatListener
         )
     }
 
@@ -39,17 +40,6 @@ class CatListRecyclerViewAdapter(
         // val cat: Cat = items[position] //getItem(position)
         val cat: Cat = getItem(position)
         holder.bind(cat, holderSize, position)
-
-        setHolderOnClickListener(holder)
-    }
-
-    private fun setHolderOnClickListener(holder: CatHolder) {
-        holder.parent.setOnClickListener {
-            holder.position?.let { it ->
-                Log.d(TAG, "Cat position at List : $it")
-                onHolderClickListener(it)
-            }
-        }
     }
 
     override fun getItemCount(): Int {
@@ -64,14 +54,25 @@ class CatListRecyclerViewAdapter(
         // notifyDataSetChanged()
     }
 
-    inner class CatHolder(private val binding: ViewCatBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+
+    interface OnCatListener {
+        fun onCatClick(position: Int)
+    }
+
+
+    inner class CatHolder(private val binding: ViewCatBinding, private val onCatListener: OnCatListener) :
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         private var cat: Cat? = null
         private var _position: Int? = null
-        val position get() = _position
 
-        val parent = binding.root
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(p0: View?) {
+            onCatListener.onCatClick(adapterPosition)
+        }
 
         fun bind(cat: Cat, holderSize: Int, position: Int) {
             _position = position
@@ -79,7 +80,7 @@ class CatListRecyclerViewAdapter(
 
             binding.apply {
                 imageView.transitionName = cat.imageUrl
-                imageView.tag=cat.id
+                imageView.tag = cat.id
                 setSizeImageView(imageView, holderSize)
 
                 loadImage(imageView, cat)
@@ -88,7 +89,7 @@ class CatListRecyclerViewAdapter(
 
         private fun setTextHolder(cat: Cat) {
             binding.textLoading.visibility = View.GONE
-            binding.textSize.text = "${cat.id}  - ${cat.width} x ${cat.height}]"
+            binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
         }
 
         private fun loadImage(imageView: ImageView, cat: Cat) {
@@ -129,6 +130,7 @@ class CatListRecyclerViewAdapter(
             imageView.minimumHeight = size
             imageView.maxHeight = size
         }
+
     }
 
     companion object {

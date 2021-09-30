@@ -1,6 +1,7 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +39,7 @@ class CatListRecyclerViewAdapter(
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
         // val cat: Cat = items[position] //getItem(position)
         val cat: Cat = getItem(position)
-        holder.bind(cat, holderSize)
+        holder.bind(cat, holderSize, position)
     }
 
     override fun getItemCount(): Int {
@@ -59,45 +60,41 @@ class CatListRecyclerViewAdapter(
     }
 
 
-    inner class CatHolder(
-        private val binding: ViewCatBinding,
-        private val onCatListener: OnCatListener
-    ) :
+    inner class CatHolder(private val binding: ViewCatBinding, private val onCatListener: OnCatListener) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+
+        private var cat: Cat? = null
+        private var _position: Int? = null
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(p0: View?) {
-            onCatListener.onCatClick(bindingAdapterPosition)
+            onCatListener.onCatClick(adapterPosition)
         }
 
-        fun bind(cat: Cat, holderSize: Int) {
-            setContentHolder(null)
-            setSizeImageView(binding.imageView, holderSize)
-            loadImage(cat)
-        }
+        fun bind(cat: Cat, holderSize: Int, position: Int) {
+            _position = position
+            this.cat = cat
 
-        private fun setContentHolder(cat: Cat?) {
             binding.apply {
-                if (cat == null) {
-                    imageView.transitionName = null
-                    imageView.tag = null
-                    binding.textLoading.visibility = View.VISIBLE
-                    binding.textSize.text = null
-                } else {
-                    imageView.transitionName = cat.imageUrl
-                    imageView.tag = cat.id
-                    binding.textLoading.visibility = View.GONE
-                    binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
-                }
+                imageView.transitionName = cat.imageUrl
+                imageView.tag = cat.id
+                setSizeImageView(imageView, holderSize)
+
+                loadImage(imageView, cat)
             }
         }
 
-        private fun loadImage(cat: Cat) {
+        private fun setTextHolder(cat: Cat) {
+            binding.textLoading.visibility = View.GONE
+            binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
+        }
+
+        private fun loadImage(imageView: ImageView, cat: Cat) {
             cat.imageUrl ?: return
-            val imageView = binding.imageView
+
             Glide.with(imageView.context)
                 .load(cat.imageUrl)
                 .apply(RequestOptions.centerCropTransform())
@@ -120,7 +117,7 @@ class CatListRecyclerViewAdapter(
                         p4: Boolean
                     ): Boolean {
                         getParentFragment().startPostponedEnterTransition()
-                        setContentHolder(cat)
+                        setTextHolder(cat)
                         return false
                     }
                 })

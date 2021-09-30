@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -22,11 +23,10 @@ private const val TAG = "T5 - CatListRVAdapter"
 
 class CatListRecyclerViewAdapter(
     private val holderSize: Int,
-    private val onHolderClickListener: (Int) -> Unit
+    private val onHolderClickListener: (Int) -> Unit,
+    private val getParentFragment: () -> Fragment
 ) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
-    // RecyclerView.Adapter<CatListRecyclerViewAdapter.ViewHolder>() {
 
-    // private var items = mutableListOf<Cat>()
     private var itemsSize = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
@@ -78,15 +78,17 @@ class CatListRecyclerViewAdapter(
             this.cat = cat
 
             binding.apply {
-                itemView.transitionName = cat.imageUrl
+                imageView.transitionName = cat.imageUrl
+                imageView.tag=cat.id
                 setSizeImageView(imageView, holderSize)
+
                 loadImage(imageView, cat)
             }
         }
 
         private fun setTextHolder(cat: Cat) {
             binding.textLoading.visibility = View.GONE
-            binding.textSize.text = "${cat.width} x ${cat.height}"
+            binding.textSize.text = "${cat.id}  - ${cat.width} x ${cat.height}]"
         }
 
         private fun loadImage(imageView: ImageView, cat: Cat) {
@@ -97,11 +99,12 @@ class CatListRecyclerViewAdapter(
                 .apply(RequestOptions.centerCropTransform())
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
-                        p0: GlideException?,
-                        p1: Any?,
-                        p2: Target<Drawable>?,
-                        p3: Boolean
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
                     ): Boolean {
+                        getParentFragment().startPostponedEnterTransition()
                         return false
                     }
 
@@ -112,6 +115,7 @@ class CatListRecyclerViewAdapter(
                         p3: DataSource?,
                         p4: Boolean
                     ): Boolean {
+                        getParentFragment().startPostponedEnterTransition()
                         setTextHolder(cat)
                         return false
                     }

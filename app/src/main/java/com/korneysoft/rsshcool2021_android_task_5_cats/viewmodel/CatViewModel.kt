@@ -31,4 +31,8 @@ class CatViewModel : ViewModel() {
     }
 
     fun getPositionShowingCat(): LiveData<Int?> = showingCat
+
+    fun getCatFromPosition(position:Int):Cat?{
+        return _items.value?.get(position)
+    }
 }

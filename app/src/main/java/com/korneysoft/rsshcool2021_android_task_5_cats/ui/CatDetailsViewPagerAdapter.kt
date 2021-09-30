@@ -19,8 +19,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatDetail
 class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) :
     ListAdapter<Cat, CatDetailsViewPagerAdapter.PagerHolder>(itemComparator) {
 
-    //private var itemsSize = 0
-    private val items = mutableListOf<Cat>()
+    private var itemsSize = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerHolder {
         return PagerHolder(
@@ -34,23 +33,24 @@ class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) 
     }
 
     override fun getItemCount(): Int {
-        //return itemsSize
-        return items.size
+        return itemsSize
     }
 
     fun update(newItems: List<Cat>) {
-        //itemsSize = newItems.size
-        //submitList(newItems)
-         items.addAll(newItems)
-         notifyDataSetChanged()
+        itemsSize = newItems.size
+        submitList(newItems)
     }
 
     inner class PagerHolder(private val binding: ViewCatDetailsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(cat: Cat) {
+
             binding.apply {
-                itemView.transitionName = cat.imageUrl
+                //itemView.transitionName = cat.imageUrl
+                //itemView.tag=cat.id
+                imageViewDetail.transitionName = cat.imageUrl
+                imageViewDetail.tag=cat.id
                 showCat(imageViewDetail, cat)
             }
         }

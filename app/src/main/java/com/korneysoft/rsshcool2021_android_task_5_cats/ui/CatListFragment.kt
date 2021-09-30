@@ -2,6 +2,7 @@ package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionSet
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.transition.Transition
+import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
@@ -52,6 +55,14 @@ class CatListFragment : Fragment() {
         setRecycleViewSettings()
         registerObserverItems()
 
+        prepareTransition()
+
+        return view
+    }
+
+    private fun prepareTransition() {
+        exitTransition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.grid_exit_transition);
 
         setExitSharedElementCallback(
             object : SharedElementCallback() {
@@ -63,15 +74,12 @@ class CatListFragment : Fragment() {
                         val view = getView(position)
                         view?.let { view ->
                             // Map the first shared element name to the child ImageView.
-                            sharedElements[names[0]] = view//.findViewById(R.id.cat_card)
+                            sharedElements[names[0]] = view
                         }
                     }
                 }
             }
         )
-
-
-        return view
     }
 
     override fun onResume() {
@@ -86,14 +94,30 @@ class CatListFragment : Fragment() {
     }
 
     private fun getView(position: Int): View? {
-        val holder = binding.catListRecyclerView.findViewHolderForAdapterPosition(position)
-        return holder?.itemView
+//        val holder = binding.catListRecyclerView.findViewHolderForAdapterPosition(position)
+//        return holder?.itemView?.findViewById(R.id.image_view)//cat_card)
+
+        val cat=viewModel.getCatFromPosition(position)
+        return binding.catListRecyclerView.findViewWithTag(cat?.id)
     }
+
+    private fun getCurrentFragment(): Fragment = this
 
     private fun ShowDetailsFragment_TMP(position: Int) {
         val fragment: Fragment = CatDetailsFragment.newInstance()
+
+
+
         activity?.supportFragmentManager?.let { fragmentManager ->
             getView(position)?.let { view ->
+                // Exclude the clicked card from the exit transition (e.g. the card will disappear immediately
+                // instead of fading out with the rest to prevent an overlapping animation of fade and move).
+
+                exitTransition?.let {
+                    if (it is TransitionSet) {
+                        it.excludeTarget(view, true)
+                    }
+                }
                 fragmentManager
                     .beginTransaction()
                     .setReorderingAllowed(true)
@@ -158,7 +182,10 @@ class CatListFragment : Fragment() {
     private fun setRecycleViewSettings() {
         binding.catListRecyclerView.apply {
             layoutManager = GridLayoutManager(context, columnCount)
-            adapter = CatListRecyclerViewAdapter(holderSize) { onClickOnCat(it) }
+            adapter = CatListRecyclerViewAdapter(
+                holderSize,
+                { onClickOnCat(it) },
+                { getCurrentFragment() })
         }
     }
 

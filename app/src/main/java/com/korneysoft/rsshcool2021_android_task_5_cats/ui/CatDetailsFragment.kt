@@ -1,12 +1,15 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.Observer
 import androidx.transition.Transition
 import androidx.transition.TransitionInflater
@@ -39,14 +42,35 @@ class CatDetailsFragment : Fragment() {
         _binding = FragmentCatDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val transition: Transition = TransitionInflater.from(context)
-            .inflateTransition(R.transition.cat_shared_element_transition)
-        sharedElementEnterTransition = transition
+        binding.catViewPager2.adapter = CatDetailsViewPagerAdapter { getCurrentFragment() }
 
-        setViewPagerSettings()
         registerObserverItems()
-
         showCatAtCurrentPosition()
+
+        binding.catViewPager2.apply {
+            registerOnPageChangeCallback(object :
+                ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    saveLastShowingCat(position)
+                    val cat=viewModel.getCatFromPosition(position)
+                    Log.d(TAG,"$cat")
+                    Log.d(TAG,binding.catViewPager2.findViewWithTag<View>(cat?.id).toString())
+                }
+            })
+        }
+
+        prepareSharedElementTransition()
+
+        if (savedInstanceState==null){
+            postponeEnterTransition()
+        }
+
+        return view
+    }
+
+    private fun prepareSharedElementTransition() {
+        sharedElementEnterTransition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.cat_shared_element_transition)
 
         setEnterSharedElementCallback(
             object : SharedElementCallback() {
@@ -64,24 +88,15 @@ class CatDetailsFragment : Fragment() {
                 }
             }
         )
-
-
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // showCatAtCurrentPosition()
-
-
     }
 
     override fun onResume() {
         super.onResume()
-        //showCatAtCurrentPosition()
-
     }
-
 
 
     override fun onDestroy() {
@@ -90,30 +105,8 @@ class CatDetailsFragment : Fragment() {
     }
 
     private fun getView(position: Int): View? {
-//        val holder =
-//            (binding.catViewPager2[0] as RecyclerView).layoutManager?.findViewByPosition(position)
-//        return holder?.itemView
-        //val view =binding.catViewPager2[0] as RecyclerView).findViewHolderForAdapterPosition(position)
-
-        binding.catViewPager2.adapter?.let { adapter ->
-            val currentFragment =
-                childFragmentManager.findFragmentByTag("f" + adapter.getItemId(position))
-            return currentFragment?.view
-        }
-        return null
-    }
-
-    private fun setViewPagerSettings() {
-        binding.catViewPager2.apply {
-            adapter = CatDetailsViewPagerAdapter { getCurrentFragment() }
-
-            registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    saveLastShowingCat(position)
-                }
-            })
-        }
+        val cat=viewModel.getCatFromPosition(position)
+        return binding.catViewPager2.findViewWithTag(cat?.id)
     }
 
     private fun getCurrentFragment(): Fragment = this

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.SharedElementCallback
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -70,7 +71,7 @@ class CatDetailsFragment : Fragment() {
         super.onResume()
         showCatAtCurrentPosition()
     }
-
+//
 //    private fun saveImageAs() {
 //        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
 //        intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -101,7 +102,7 @@ class CatDetailsFragment : Fragment() {
 //            }
 //        }
 //    }
-
+//
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
 //        super.onActivityResult(requestCode, resultCode, resultData)
 //
@@ -134,13 +135,15 @@ class CatDetailsFragment : Fragment() {
             val filename = url.substringAfterLast("/")
             val request = DownloadManager.Request(Uri.parse(url))
                 .setTitle(filename)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setAllowedOverMetered(true)
                 .setDestinationInExternalFilesDir(
                     context,
                     context?.getString(R.string.app_name),
                     filename
                 )
-            (context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager)
-                .enqueue(request)
+            val dm = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            dm.enqueue(request)
         }
     }
 

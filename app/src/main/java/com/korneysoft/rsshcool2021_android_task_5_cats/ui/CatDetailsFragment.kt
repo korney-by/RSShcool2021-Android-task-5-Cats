@@ -1,5 +1,8 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +18,12 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatDetailsBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import kotlin.collections.set
+import androidx.core.app.ActivityCompat.startActivityForResult
+
+import android.content.Intent
+
+
+
 
 
 private val TAG = "T5-CatDetailsFragment"
@@ -48,6 +57,10 @@ class CatDetailsFragment : Fragment() {
             })
         }
 
+        binding.floatingButtonSave.setOnClickListener() {
+            saveImage()
+        }
+
         prepareSharedElementTransition()
         if (savedInstanceState == null) {
             postponeEnterTransition()
@@ -57,12 +70,84 @@ class CatDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onResume() {
         super.onResume()
         showCatAtCurrentPosition()
+    }
+
+    private fun saveImageAs() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "YOUR FILETYPE" //not needed, but maybe usefull
+        intent.putExtra(Intent.EXTRA_TITLE, "YOUR FILENAME") //not needed, but maybe usefull
+        startActivityForResult(intent, SOME_INTEGER)
+
+        override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+            super.onActivityResult(requestCode, resultCode, resultData)
+
+            if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
+                resultData?.data?.also { documentUri ->
+
+                    try {
+                        val db = DBBackend(context!!)
+                        val dbFile = File(db.getDatabaseFilename())
+
+                        var exportFile = File(documentUri.path)
+                        exportFile.createNewFile()
+                        dbFile.copyTo(exportFile)
+                    }
+                    catch( error : Exception )
+                    {
+                        Log.e("FileError", error.toString() )
+                        Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, resultData)
+
+        if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
+            resultData?.data?.also { documentUri ->
+
+                try {
+                    val db = DBBackend(context!!)
+                    val dbFile = File(db.getDatabaseFilename())
+
+                    var exportFile = File(documentUri.path)
+                    exportFile.createNewFile()
+                    dbFile.copyTo(exportFile)
+                }
+                catch( error : Exception )
+                {
+                    Log.e("FileError", error.toString() )
+                    Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun saveImage() {
+        var cat: Cat? = null
+        getCurrentPosition()?.let {
+            cat = viewModel.getCatFromPosition(it)
+        }
+        cat?.imageUrl?.let { url ->
+            val filename = url.substringAfterLast("/")
+            val request = DownloadManager.Request(Uri.parse(url))
+                .setTitle(filename)
+                .setDestinationInExternalFilesDir(
+                    context,
+                    context?.getString(R.string.app_name),
+                    filename
+                )
+            (context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager)
+                .enqueue(request)
+        }
     }
 
     private fun prepareSharedElementTransition() {

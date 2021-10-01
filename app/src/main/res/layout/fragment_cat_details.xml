@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.CatDetailsFragment">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:backgroundTint="@color/secondaryLightColor"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_download_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/Theme.RSShcool2021Androidtask5Cats.DarkBlue"
+        />
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/cat_view_pager2"
         android:layout_width="0dp"
@@ -15,7 +28,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+    </androidx.viewpager2.widget.ViewPager2>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

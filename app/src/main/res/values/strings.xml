@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Task 5 - Cats</string>
-    <string name="loading_text">loading...</string>
+    <string name="loading_text">loading&#8230;</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

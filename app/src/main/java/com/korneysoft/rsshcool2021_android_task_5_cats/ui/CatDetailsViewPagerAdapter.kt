@@ -47,7 +47,7 @@ class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) 
         fun bind(cat: Cat) {
             binding.apply {
                 imageViewDetail.transitionName = cat.imageUrl
-                imageViewDetail.tag=cat.id
+                imageViewDetail.tag = cat.id
                 showCat(imageViewDetail, cat)
             }
         }
@@ -63,7 +63,7 @@ class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) 
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        getParentFragment().startPostponedEnterTransition();
+                        getParentFragment().startPostponedEnterTransition()
                         return false
                     }
 
@@ -74,7 +74,7 @@ class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) 
                         dataSource: DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        getParentFragment().startPostponedEnterTransition();
+                        getParentFragment().startPostponedEnterTransition()
                         return false
                     }
                 })

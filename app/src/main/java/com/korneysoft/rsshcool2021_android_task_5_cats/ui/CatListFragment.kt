@@ -12,14 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
-import java.util.*
 
 private const val TAG = "T5-CatListFragment: "
 
@@ -75,13 +73,9 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         setExitSharedElementCallback(
             object : SharedElementCallback() {
                 override fun onMapSharedElements(
-                    names: List<String?>, sharedElements: MutableMap<String?, View?>
+                    names: List<String?>,
+                    sharedElements: MutableMap<String?, View?>
                 ) {
-                    // Locate the ViewHolder for the clicked position.
-                    Log.d(
-                        TAG,
-                        "Scroll END - ${binding.catListRecyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE}"
-                    )
                     viewModel.lastShowingCat?.let { position ->
                         val view = getView(position)
                         view?.let {
@@ -95,14 +89,16 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        scrollToPositionCurrentCat()
+        prescrollForCorrectAnimation()
     }
 
     override fun onResume() {
         super.onResume()
+        scrollToPositionCurrentCat()
     }
 
     override fun onDestroyView() {
+        saveVisiblePosition()
         super.onDestroyView()
         _binding = null
     }
@@ -119,43 +115,38 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     private fun getCurrentFragment(): Fragment = this
 
+    private fun saveVisiblePosition() {
+        (binding.catListRecyclerView.layoutManager as GridLayoutManager).let {
+            viewModel.firstGridVisiblePosition = it.findFirstVisibleItemPosition()
+            viewModel.lastGridVisiblePosition = it.findLastVisibleItemPosition()
+        }
+    }
+
+    private fun isCatPositionVisible(position: Int): Boolean {
+        return position in viewModel.firstGridVisiblePosition..viewModel.lastGridVisiblePosition
+    }
+
+    fun prescrollForCorrectAnimation() {
+        val position = viewModel.lastShowingCat ?: return
+        if (!isCatPositionVisible(position)) {
+            binding.catListRecyclerView.scrollToPosition(position)
+        }
+    }
+
     private fun scrollToPositionCurrentCat() {
         val position = viewModel.lastShowingCat ?: return
-        //binding.catListRecyclerView.smoothScrollToPosition(position)
-        binding.catListRecyclerView.scrollToPosition(position)
-//        binding.catListRecyclerView.post {
-//            binding.catListRecyclerView.smoothScrollToPosition(position)
-//        }
+        val layoutManager = binding.catListRecyclerView.layoutManager ?: return
 
-//        binding.catListRecyclerView.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-//            override fun onLayoutChange(
-//                v: View,
-//                left: Int,
-//                top: Int,
-//                right: Int,
-//                bottom: Int,
-//                oldLeft: Int,
-//                oldTop: Int,
-//                oldRight: Int,
-//                oldBottom: Int
-//            ) {
-//                binding.catListRecyclerView.removeOnLayoutChangeListener(this)
-//                val layoutManager = binding.catListRecyclerView.layoutManager
-//                layoutManager ?: return
-//                var viewAtPosition: View? = layoutManager.findViewByPosition(position)
-//                //if (viewAtPosition==null)                    viewAtPosition=getView(position)
-//
-//                // Scroll to position if the view for the current position is null (not currently part of
-//                // layout manager children), or it's not completely visible.
-//                if (viewAtPosition == null || layoutManager
-//                        .isViewPartiallyVisible(viewAtPosition, false, true)
-//                ) {
-//                    binding.catListRecyclerView.post { layoutManager.scrollToPosition(position) }
-//                }
-//
-//            }
-//        })
+        val viewAtPosition = layoutManager.findViewByPosition(position)
+        if (viewAtPosition == null) {
+            binding.catListRecyclerView.scrollToPosition(position)
+            saveVisiblePosition()
+            return
+        }
 
+        if (layoutManager.isViewPartiallyVisible(viewAtPosition, false, true)) {
+            layoutManager.scrollToPosition(position)
+        }
     }
 
     private fun showLoadAnimation() {
@@ -217,7 +208,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     override fun onCatClick(position: Int) {
         Log.d(TAG, "OnClick $position")
         selectedView = getView(position)
-        if (selectedView!=null) {
+        if (selectedView != null) {
             viewModel.setShowingCat(position) { this@CatListFragment }
         }
     }
@@ -259,6 +250,4 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
             }
         }
     }
-
-
 }

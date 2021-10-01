@@ -18,17 +18,11 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatDetailsBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import kotlin.collections.set
-import androidx.core.app.ActivityCompat.startActivityForResult
-
-import android.content.Intent
-
-
-
-
 
 private val TAG = "T5-CatDetailsFragment"
 
 class CatDetailsFragment : Fragment() {
+
     private var _binding: FragmentCatDetailsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CatViewModel by activityViewModels()
@@ -77,59 +71,59 @@ class CatDetailsFragment : Fragment() {
         showCatAtCurrentPosition()
     }
 
-    private fun saveImageAs() {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "YOUR FILETYPE" //not needed, but maybe usefull
-        intent.putExtra(Intent.EXTRA_TITLE, "YOUR FILENAME") //not needed, but maybe usefull
-        startActivityForResult(intent, SOME_INTEGER)
+//    private fun saveImageAs() {
+//        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+//        intent.addCategory(Intent.CATEGORY_OPENABLE)
+//        intent.type = "YOUR FILETYPE" //not needed, but maybe usefull
+//        intent.putExtra(Intent.EXTRA_TITLE, "YOUR FILENAME") //not needed, but maybe usefull
+//        startActivityForResult(intent, SOME_INTEGER)
+//
+//        override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+//            super.onActivityResult(requestCode, resultCode, resultData)
+//
+//            if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
+//                resultData?.data?.also { documentUri ->
+//
+//                    try {
+//                        val db = DBBackend(context!!)
+//                        val dbFile = File(db.getDatabaseFilename())
+//
+//                        var exportFile = File(documentUri.path)
+//                        exportFile.createNewFile()
+//                        dbFile.copyTo(exportFile)
+//                    }
+//                    catch( error : Exception )
+//                    {
+//                        Log.e("FileError", error.toString() )
+//                        Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-        override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-            super.onActivityResult(requestCode, resultCode, resultData)
-
-            if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
-                resultData?.data?.also { documentUri ->
-
-                    try {
-                        val db = DBBackend(context!!)
-                        val dbFile = File(db.getDatabaseFilename())
-
-                        var exportFile = File(documentUri.path)
-                        exportFile.createNewFile()
-                        dbFile.copyTo(exportFile)
-                    }
-                    catch( error : Exception )
-                    {
-                        Log.e("FileError", error.toString() )
-                        Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        super.onActivityResult(requestCode, resultCode, resultData)
-
-        if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
-            resultData?.data?.also { documentUri ->
-
-                try {
-                    val db = DBBackend(context!!)
-                    val dbFile = File(db.getDatabaseFilename())
-
-                    var exportFile = File(documentUri.path)
-                    exportFile.createNewFile()
-                    dbFile.copyTo(exportFile)
-                }
-                catch( error : Exception )
-                {
-                    Log.e("FileError", error.toString() )
-                    Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, resultData)
+//
+//        if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
+//            resultData?.data?.also { documentUri ->
+//
+//                try {
+//                    val db = DBBackend(context!!)
+//                    val dbFile = File(db.getDatabaseFilename())
+//
+//                    var exportFile = File(documentUri.path)
+//                    exportFile.createNewFile()
+//                    dbFile.copyTo(exportFile)
+//                }
+//                catch( error : Exception )
+//                {
+//                    Log.e("FileError", error.toString() )
+//                    Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
+//                }
+//            }
+//        }
+//    }
 
     private fun saveImage() {
         var cat: Cat? = null
@@ -157,12 +151,13 @@ class CatDetailsFragment : Fragment() {
         setEnterSharedElementCallback(
             object : SharedElementCallback() {
                 override fun onMapSharedElements(
-                    names: List<String?>, sharedElements: MutableMap<String?, View?>
+                    names: List<String?>,
+                    sharedElements: MutableMap<String?, View?>
                 ) {
                     getCurrentPosition()?.let { position ->
                         showCatAtCurrentPosition()
                         val view = getView(position)
-                        view?.let { view ->
+                        view?.let {
                             // Map the first shared element name to the child ImageView.
                             sharedElements[names[0]] = view
                         }

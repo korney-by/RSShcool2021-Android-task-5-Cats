@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor {
         viewModel.getPositionShowingCat().observe(this,
             Observer {
                 it ?: return@Observer
-                loadCatDetailsFragment(it,viewModel.getGridFragment)
+                loadCatDetailsFragment(it, viewModel.getGridFragment)
                 viewModel.setShowingCat(null) { null }
             })
     }
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor {
             .commit()
     }
 
-    private fun loadCatDetailsFragment(position: Int,sourceFragment:CatListFragment?) {
+    private fun loadCatDetailsFragment(position: Int, sourceFragment: CatListFragment?) {
         sourceFragment ?: return
         viewModel.lastShowingCat = position
         val destinationFragment: Fragment = CatDetailsFragment.newInstance()
@@ -70,12 +70,11 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor {
                 .replace(
                     R.id.fragmentContainerView,
                     destinationFragment,
-                    CatDetailsFragment.javaClass.simpleName
+                    CatDetailsFragment::class.java.simpleName
                 )
-                .addToBackStack(CatDetailsFragment.javaClass.simpleName)
+                .addToBackStack(CatDetailsFragment::class.java.simpleName)
                 .commit()
         }
-
     }
 
     override fun setNavigationBarColor() {

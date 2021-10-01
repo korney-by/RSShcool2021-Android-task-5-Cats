@@ -5,5 +5,5 @@ data class Cat(
     val imageUrl: String?,
     val width: Int?,
     val height: Int?,
-    var isReady:Boolean=false
+    var isReady: Boolean = false
 )

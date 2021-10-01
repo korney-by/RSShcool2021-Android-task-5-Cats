@@ -1,7 +1,6 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +23,7 @@ private const val TAG = "T5 - CatListRVAdapter"
 class CatListRecyclerViewAdapter(
     private val holderSize: Int,
     private val onCatListener: OnCatListener,
-    private val getParentFragment: () -> Fragment,
+    private val getParentFragment: () -> Fragment
 ) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
 
     private var itemsSize = 0
@@ -33,13 +32,16 @@ class CatListRecyclerViewAdapter(
         return CatHolder(
             ViewCatBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onCatListener
-        )
+        ).apply {
+            itemView.minimumHeight = holderSize
+            itemView.minimumWidth = holderSize
+        }
     }
 
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
         // val cat: Cat = items[position] //getItem(position)
         val cat: Cat = getItem(position)
-        holder.bind(cat, holderSize, position)
+        holder.bind(cat, holderSize)
     }
 
     override fun getItemCount(): Int {
@@ -54,47 +56,49 @@ class CatListRecyclerViewAdapter(
         // notifyDataSetChanged()
     }
 
-
     interface OnCatListener {
         fun onCatClick(position: Int)
     }
 
-
-    inner class CatHolder(private val binding: ViewCatBinding, private val onCatListener: OnCatListener) :
+    inner class CatHolder(
+        private val binding: ViewCatBinding,
+        private val onCatListener: OnCatListener
+    ) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-
-        private var cat: Cat? = null
-        private var _position: Int? = null
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(p0: View?) {
-            onCatListener.onCatClick(adapterPosition)
+            onCatListener.onCatClick(bindingAdapterPosition)
         }
 
-        fun bind(cat: Cat, holderSize: Int, position: Int) {
-            _position = position
-            this.cat = cat
+        fun bind(cat: Cat, holderSize: Int) {
+            setContentHolder(null)
+            setSizeImageView(binding.imageView, holderSize)
+            loadImage(cat)
+        }
 
+        private fun setContentHolder(cat: Cat?) {
             binding.apply {
-                imageView.transitionName = cat.imageUrl
-                imageView.tag = cat.id
-                setSizeImageView(imageView, holderSize)
-
-                loadImage(imageView, cat)
+                if (cat == null) {
+                    imageView.transitionName = null
+                    imageView.tag = null
+                    binding.textLoading.visibility = View.VISIBLE
+                    binding.textSize.text = null
+                } else {
+                    imageView.transitionName = cat.imageUrl
+                    imageView.tag = cat.id
+                    binding.textLoading.visibility = View.GONE
+                    binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
+                }
             }
         }
 
-        private fun setTextHolder(cat: Cat) {
-            binding.textLoading.visibility = View.GONE
-            binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
-        }
-
-        private fun loadImage(imageView: ImageView, cat: Cat) {
+        private fun loadImage(cat: Cat) {
             cat.imageUrl ?: return
-
+            val imageView = binding.imageView
             Glide.with(imageView.context)
                 .load(cat.imageUrl)
                 .apply(RequestOptions.centerCropTransform())
@@ -117,7 +121,7 @@ class CatListRecyclerViewAdapter(
                         p4: Boolean
                     ): Boolean {
                         getParentFragment().startPostponedEnterTransition()
-                        setTextHolder(cat)
+                        setContentHolder(cat)
                         return false
                     }
                 })
@@ -130,7 +134,6 @@ class CatListRecyclerViewAdapter(
             imageView.minimumHeight = size
             imageView.maxHeight = size
         }
-
     }
 
     companion object {

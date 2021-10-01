@@ -5,6 +5,7 @@
     android:id="@+id/cat_card"
     android:layout_width="wrap_content"
     android:clickable="true"
+    android:focusable="true"
     android:layout_height="wrap_content">
 
     <ImageView

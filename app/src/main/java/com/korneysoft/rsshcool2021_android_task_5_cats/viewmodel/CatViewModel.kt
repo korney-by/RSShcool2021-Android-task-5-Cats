@@ -16,6 +16,9 @@ class CatViewModel : ViewModel() {
     private val showingCat = MutableLiveData<Int?>()
     var lastShowingCat: Int? = null
 
+    var firstGridVisiblePosition: Int = -1
+    var lastGridVisiblePosition: Int = -1
+
     private var _getGridFragment: (() -> CatListFragment?)? = null
     val getGridFragment get() = _getGridFragment?.invoke()
 
@@ -27,7 +30,6 @@ class CatViewModel : ViewModel() {
     }
 
     fun setShowingCat(index: Int?, getGridFragment: () -> CatListFragment?) {
-        //lastShowingCat = index
         _getGridFragment = getGridFragment
         showingCat.value = index
     }

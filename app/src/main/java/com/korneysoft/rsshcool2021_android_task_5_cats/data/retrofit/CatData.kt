@@ -10,3 +10,13 @@ data class CatData(
     @Json(name = "width") val width: Int?,
     @Json(name = "height") val height: Int?
 )
+
+
+internal fun CatData.toCat(): Cat {
+    return Cat(
+        id = this.id,
+        imageUrl = this.url,
+        width = this.width,
+        height = this.height
+    )
+}

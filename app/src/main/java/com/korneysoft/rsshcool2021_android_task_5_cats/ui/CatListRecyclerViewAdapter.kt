@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +26,7 @@ class CatListRecyclerViewAdapter(
     private val holderSize: Int,
     private val onCatListener: OnCatListener,
     private val getParentFragment: () -> CatListFragment
-) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
+) : PagingDataAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
 
     private var itemsSize = 0
 
@@ -41,7 +42,7 @@ class CatListRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
         // val cat: Cat = items[position] //getItem(position)
-        val cat: Cat = getItem(position)
+        val cat = getItem(position)
         holder.bind(cat, holderSize)
     }
 
@@ -75,10 +76,12 @@ class CatListRecyclerViewAdapter(
             onCatListener.onCatClick(bindingAdapterPosition)
         }
 
-        fun bind(cat: Cat, holderSize: Int) {
+        fun bind(cat: Cat?, holderSize: Int) {
             setContentHolder(null)
             setSizeImageView(binding.imageView, holderSize)
-            loadImage(cat)
+            cat?.let {
+                loadImage(it)
+            }
         }
 
         private fun setContentHolder(cat: Cat?) {
@@ -102,7 +105,8 @@ class CatListRecyclerViewAdapter(
             val imageView = binding.imageView
             Glide.with(imageView.context.applicationContext)
                 .load(cat.imageUrl)
-                .apply(RequestOptions.centerCropTransform())
+                //.apply(RequestOptions.centerCropTransform())
+                .centerCrop()
                 .error(R.drawable.ic_baseline_close_24)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(

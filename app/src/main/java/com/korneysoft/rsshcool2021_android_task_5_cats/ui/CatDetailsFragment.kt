@@ -1,22 +1,20 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
-import android.app.DownloadManager
-import android.content.Context
-import android.net.Uri
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.SharedElementCallback
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.transition.TransitionInflater
 import androidx.viewpager2.widget.ViewPager2
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatDetailsBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.interfaces.SaveImageInterface
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import kotlin.collections.set
 
@@ -43,25 +41,15 @@ class CatDetailsFragment : Fragment() {
         binding.catViewPager2.adapter = CatDetailsViewPagerAdapter { getCurrentFragment() }
         registerObserverItems()
         showCatAtCurrentPosition()
-        binding.catViewPager2.apply {
-            registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    saveLastShowingCat(position)
-                }
-            })
-        }
-
-        binding.floatingButtonSave.setOnClickListener() {
-            saveImage()
-        }
-
+        setCallbackForViewPager2()
+        setListenerForSaveButton()
         prepareSharedElementTransition()
         if (savedInstanceState == null) {
             postponeEnterTransition()
         }
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,79 +59,32 @@ class CatDetailsFragment : Fragment() {
         super.onResume()
         showCatAtCurrentPosition()
     }
-//
-//    private fun saveImageAs() {
-//        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
-//        intent.addCategory(Intent.CATEGORY_OPENABLE)
-//        intent.type = "YOUR FILETYPE" //not needed, but maybe usefull
-//        intent.putExtra(Intent.EXTRA_TITLE, "YOUR FILENAME") //not needed, but maybe usefull
-//        startActivityForResult(intent, SOME_INTEGER)
-//
-//        override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-//            super.onActivityResult(requestCode, resultCode, resultData)
-//
-//            if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
-//                resultData?.data?.also { documentUri ->
-//
-//                    try {
-//                        val db = DBBackend(context!!)
-//                        val dbFile = File(db.getDatabaseFilename())
-//
-//                        var exportFile = File(documentUri.path)
-//                        exportFile.createNewFile()
-//                        dbFile.copyTo(exportFile)
-//                    }
-//                    catch( error : Exception )
-//                    {
-//                        Log.e("FileError", error.toString() )
-//                        Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, resultData)
-//
-//        if (requestCode == 4711 && resultCode == Activity.RESULT_OK) {
-//            resultData?.data?.also { documentUri ->
-//
-//                try {
-//                    val db = DBBackend(context!!)
-//                    val dbFile = File(db.getDatabaseFilename())
-//
-//                    var exportFile = File(documentUri.path)
-//                    exportFile.createNewFile()
-//                    dbFile.copyTo(exportFile)
-//                }
-//                catch( error : Exception )
-//                {
-//                    Log.e("FileError", error.toString() )
-//                    Toast.makeText(context!!,"error: ${error.toString()}", Toast.LENGTH_LONG).show()
-//                }
-//            }
-//        }
-//    }
 
-    private fun saveImage() {
-        var cat: Cat? = null
-        getCurrentPosition()?.let {
-            cat = viewModel.getCatFromPosition(it)
+    private fun setListenerForSaveButton() {
+        binding.floatingButtonSave.setOnClickListener() {
+            activity?.let { activity ->
+                if (activity !is SaveImageInterface) {
+                    return@setOnClickListener
+                }
+                if (viewModel.checkOnlineState()) {
+                    getCurrentPosition()?.let { position ->
+                        val cat = viewModel.getCatFromPosition(position)
+                        activity.saveImage(cat)
+                    }
+                }
+
+            }
         }
-        cat?.imageUrl?.let { url ->
-            val filename = url.substringAfterLast("/")
-            val request = DownloadManager.Request(Uri.parse(url))
-                .setTitle(filename)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                .setAllowedOverMetered(true)
-                .setDestinationInExternalFilesDir(
-                    context,
-                    context?.getString(R.string.app_name),
-                    filename
-                )
-            val dm = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            dm.enqueue(request)
+    }
+
+    private fun setCallbackForViewPager2() {
+        binding.catViewPager2.apply {
+            registerOnPageChangeCallback(object :
+                ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    saveLastShowingCat(position)
+                }
+            })
         }
     }
 
@@ -158,7 +99,6 @@ class CatDetailsFragment : Fragment() {
                     sharedElements: MutableMap<String?, View?>
                 ) {
                     getCurrentPosition()?.let { position ->
-                        showCatAtCurrentPosition()
                         val view = getView(position)
                         view?.let {
                             // Map the first shared element name to the child ImageView.

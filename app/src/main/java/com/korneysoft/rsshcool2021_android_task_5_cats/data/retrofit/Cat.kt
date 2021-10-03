@@ -1,4 +1,4 @@
-package com.korneysoft.rsshcool2021_android_task_5_cats.data
+package com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit
 
 data class Cat(
     val id: String,

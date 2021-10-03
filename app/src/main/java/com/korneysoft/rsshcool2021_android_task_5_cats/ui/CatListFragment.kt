@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 
@@ -106,9 +106,6 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     fun getSelectedView(): View? = selectedView
 
     private fun getView(position: Int): View? {
-//        val holder = binding.catListRecyclerView.findViewHolderForAdapterPosition(position)
-//        return holder?.itemView?.findViewById(R.id.image_view)//cat_card)
-
         val cat = viewModel.getCatFromPosition(position)
         return binding.catListRecyclerView.findViewWithTag(cat?.id)
     }
@@ -214,9 +211,6 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     }
 
     companion object {
-//        const val ARG_COLUMN_COUNT = "ARG_COLUMN_COUNT"
-//        const val ARG_HOLDER_SIZE = "ARG_HOLDER_SIZE"
-
         @JvmStatic
         fun newInstance() = CatListFragment()
     }

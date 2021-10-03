@@ -1,4 +1,4 @@
-package com.korneysoft.rsshcool2021_android_task_5_cats.data
+package com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

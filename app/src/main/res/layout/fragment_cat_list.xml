@@ -21,16 +21,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cat_list_recycler_view"
         android:name="com.korneysoft.rsshcool2021_android_task_5_cats.CatListFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="1px"
         android:background="@color/primaryLightColor"
         android:visibility="gone"
         app:layoutManager="LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:context=".ui.CatListFragment"
         tools:listitem="@layout/view_cat"
         tools:visibility="gone" />

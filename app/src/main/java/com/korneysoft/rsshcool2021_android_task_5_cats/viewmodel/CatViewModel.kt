@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Repository
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TimeoutListener
@@ -50,7 +51,7 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
     fun getData() {
         viewModelScope.launch {
             if (checkOnlineState()) {
-                _items.value = repository.getCatList()
+                _items.postValue(repository.getCatList())
             }
         }
     }
@@ -63,6 +64,29 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
             _items.value = _items.value?.toList()
         }
     }
+
+//    fun loadImagesToCash(catList: List<Cat>) {
+//        //load images to cash in coroutine
+//        val firstVisiblePosition = firstGridVisiblePosition
+//        val lastVisiblePosition = lastGridVisiblePosition
+//        viewModelScope.launch {
+//            catList.forEach() {
+//                if (it.width != null && it.height != null)
+//                if {
+//                    Glide.with(context)
+//                        .load(it.imageUrl)
+//                        .submit(it.width, it.height)
+//                    //.preload()
+////                    .diskCacheStrategy(DiskCacheStrategy.ALL))
+////                .apply(requestOptions)
+////                .submit();
+//                    //.downloadOnly(500, 500);
+//                }
+//            }
+//        }
+//
+//    }
+
 
     override fun onConnectionTimeout() {
         Log.d(TAG, "onConnectionTimeout")

@@ -1,5 +1,6 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -14,6 +15,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
@@ -110,7 +114,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         return binding.catListRecyclerView.findViewWithTag(cat?.id)
     }
 
-    private fun getCurrentFragment(): Fragment = this
+    private fun getCurrentFragment() = this
 
     private fun saveVisiblePosition() {
         (binding.catListRecyclerView.layoutManager as GridLayoutManager).let {
@@ -154,6 +158,10 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
                 .load(R.raw.black_cat)
                 .into(binding.imageViewBackground)
         }
+    }
+
+    fun imageLoadFailed(){
+        viewModel.checkOnlineState()
     }
 
     private fun hideLoadAnimation() {

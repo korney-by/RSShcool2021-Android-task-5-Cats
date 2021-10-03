@@ -214,12 +214,4 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
 //            }
         }
     }
-
-    override fun onBackPressed() {
-        if (isFragmentVisible(OfflineFragment::class.java.simpleName)) {
-            finish()
-        } else {
-            super.onBackPressed()
-        }
-    }
 }

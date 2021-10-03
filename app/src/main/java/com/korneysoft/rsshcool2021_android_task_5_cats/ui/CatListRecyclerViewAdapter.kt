@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
 
@@ -23,7 +24,7 @@ private const val TAG = "T5 - CatListRVAdapter"
 class CatListRecyclerViewAdapter(
     private val holderSize: Int,
     private val onCatListener: OnCatListener,
-    private val getParentFragment: () -> Fragment
+    private val getParentFragment: () -> CatListFragment
 ) : ListAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
 
     private var itemsSize = 0
@@ -99,9 +100,10 @@ class CatListRecyclerViewAdapter(
         private fun loadImage(cat: Cat) {
             cat.imageUrl ?: return
             val imageView = binding.imageView
-            Glide.with(imageView.context)
+            Glide.with(imageView.context.applicationContext)
                 .load(cat.imageUrl)
                 .apply(RequestOptions.centerCropTransform())
+                .error(R.drawable.ic_baseline_close_24)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -109,6 +111,7 @@ class CatListRecyclerViewAdapter(
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
+                        getParentFragment().imageLoadFailed()
                         getParentFragment().startPostponedEnterTransition()
                         return false
                     }

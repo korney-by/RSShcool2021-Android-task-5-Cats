@@ -7,15 +7,18 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bumptech.glide.Glide
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Repository
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.CatPageSource
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TimeoutListener
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.CatListFragment
 import com.korneysoft.rsshcool2021_android_task_5_cats.internet_utils.isInternetAvailable
-import kotlinx.coroutines.launch
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.CatListFragment
+import java.util.concurrent.Flow
 
 private const val TAG = "T5-CatViewModel"
 
@@ -24,9 +27,6 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
     @SuppressLint("StaticFieldLeak")
     private val context: Context = application.applicationContext
     private val repository by lazy { Repository.get() }
-
-    private val _items = MutableLiveData<List<Cat>>()
-    val items: LiveData<List<Cat>> get() = _items
 
     private val _showingCat = MutableLiveData<Int?>()
     val showingCat: LiveData<Int?> get() = _showingCat
@@ -45,25 +45,31 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
         Repository.initialize()
         repository.setTimeoutListener(this)
         _showingCat.value = null
-        getData()
     }
 
-    fun getData() {
-        viewModelScope.launch {
-            if (checkOnlineState()) {
-                _items.postValue(repository.getCatList())
-            }
+
+    fun getCatListData(): Flow<PagingData<Cat>> {
+        return Pager(config = PagingConfig(pageSize = 20, maxSize = 200),
+            pagingSourceFactory = { CatPageSource(repository.service) }
+        ).flow.cachedIn(viewModelScope)
+
+        fun getListData(): Flow<PagingData<CharacterData>> {
+            return Pager(config = PagingConfig(pageSize = 20, maxSize = 200),
+                pagingSourceFactory = { CharacterPagingSource(retroService) })
+                .flow.cachedIn(viewModelScope)
         }
+
+
     }
 
-    private fun updateData() {
-        // kick LiveData
-        if (_items.value == null) {
-            getData()
-        } else {
-            _items.value = _items.value?.toList()
-        }
-    }
+//    private fun updateData() {
+//        // kick LiveData
+//        if (_items.value == null) {
+//            getData()
+//        } else {
+//            _items.value = _items.value?.toList()
+//        }
+//    }
 
 //    fun loadImagesToCash(catList: List<Cat>) {
 //        //load images to cash in coroutine
@@ -107,7 +113,7 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
     fun checkOnlineState(): Boolean {
         val isOnlineValue = isInternetAvailable(context)
         if (isOnlineValue && isOnlineValue != _isOnline.value) {
-            updateData()
+            //updateData()
         }
         _isOnline.value = isOnlineValue
         return isOnlineValue

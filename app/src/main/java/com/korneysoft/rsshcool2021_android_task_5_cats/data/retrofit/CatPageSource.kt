@@ -5,9 +5,8 @@ import androidx.paging.PagingState
 import com.korneysoft.rsshcool2021_android_task_5_cats.TheCatApiService
 import retrofit2.HttpException
 
-class CatPagingSource(
-    private val apiService: TheCatApiService,
-    private val query: String
+class CatPageSource(
+    val apiService: TheCatApiService
 ) : PagingSource<Int, Cat>() {
 
     override fun getRefreshKey(state: PagingState<Int, Cat>): Int? {
@@ -17,20 +16,20 @@ class CatPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Cat> {
-        if (query.isBlank()) {
-            return LoadResult.Page(emptyList(), prevKey = null, nextKey = null)
-        }
         val pageNumber = params.key ?: INITIAL_PAGE_NUMBER
         val pageSize = params.loadSize.coerceAtMost(TheCatApiService.MAX_PAGE_SIZE)
-
-        val response = apiService.getListOfCatsData(pageNumber, pageSize)
-        if (response.isSuccessful) {
-            val cats = response.body().cats.map { it -> it.toCat() }
-            val nextPage = if (cats.size < pageSize) null else pageNumber + 1
-            val prevPage = if (pageNumber == 1) null else pageNumber - 1
-            return LoadResult.Page(cats, prevPage, nextPage)
-        } else {
-            return LoadResult.Error(HttpException(response))
+        val response = apiService.getCatDataListFromAPI(pageNumber, pageSize)
+        try {
+            if (response.isSuccessful) {
+                val cats = response.body()!!.catsDto.map { it.toCat() }
+                val nextPage = if (cats.size < pageSize) null else pageNumber + 1
+                val prevPage = if (pageNumber == 1) null else pageNumber - 1
+                return LoadResult.Page(cats, prevPage, nextPage)
+            } else {
+                return LoadResult.Error(HttpException(response))
+            }
+        } catch (e: HttpException) {
+            return LoadResult.Error(e)
         }
     }
 

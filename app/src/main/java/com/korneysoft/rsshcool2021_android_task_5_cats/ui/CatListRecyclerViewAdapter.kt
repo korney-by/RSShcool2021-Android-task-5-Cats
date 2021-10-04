@@ -28,7 +28,7 @@ class CatListRecyclerViewAdapter(
     private val getParentFragment: () -> CatListFragment
 ) : PagingDataAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
 
-    private var itemsSize = 0
+   // private var itemsSize = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
         return CatHolder(
@@ -46,17 +46,17 @@ class CatListRecyclerViewAdapter(
         holder.bind(cat, holderSize)
     }
 
-    override fun getItemCount(): Int {
-        // items.size
-        return itemsSize
-    }
+//    override fun getItemCount(): Int {
+//        // items.size
+//        return itemsSize
+//    }
 
-    fun update(newItems: List<Cat>) {
-        submitList(newItems)
-        itemsSize = newItems.size
-        // items.addAll(newItems)
-        // notifyDataSetChanged()
-    }
+//    suspend fun update(newItems: List<Cat>) {
+//        submitData(newItems)
+//       // itemsSize = newItems.size
+//        // items.addAll(newItems)
+//        // notifyDataSetChanged()
+//    }
 
     interface OnCatListener {
         fun onCatClick(position: Int)

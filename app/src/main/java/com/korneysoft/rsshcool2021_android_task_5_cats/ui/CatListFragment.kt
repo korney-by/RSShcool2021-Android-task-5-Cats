@@ -1,8 +1,8 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.provider.SyncStateContract.Helpers.update
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,12 +12,10 @@ import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
@@ -30,6 +28,12 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     private val binding get() = _binding!!
     private val gridSettings by lazy { GridSettings() }
     private val viewModel: CatViewModel by activityViewModels()
+    private val adapter by lazy {
+        CatListRecyclerViewAdapter(
+            holderSize,
+            this
+        ) { getCurrentFragment() }
+    }
 
     private var columnCount = 0
     private var holderSize = 0
@@ -47,11 +51,13 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         _binding = FragmentCatListBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        showLoadAnimation()
+
         columnCount = gridSettings.columnCount
         holderSize = gridSettings.cellSize
+        binding.catListRecyclerView.layoutManager = GridLayoutManager(context, columnCount)
+        binding.catListRecyclerView.adapter = adapter
 
-        showLoadAnimation()
-        setRecyclerViewSettings()
         registerObserverItems()
 
         prepareTransition()
@@ -61,14 +67,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         return view
     }
 
-    private fun setRecyclerViewSettings() {
-        binding.catListRecyclerView.layoutManager = GridLayoutManager(context, columnCount)
-        binding.catListRecyclerView.adapter = CatListRecyclerViewAdapter(
-            holderSize,
-            this,
-            { getCurrentFragment() }
-        )
-    }
+
 
     private fun prepareTransition() {
         exitTransition = TransitionInflater.from(context)
@@ -160,7 +159,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         }
     }
 
-    fun imageLoadFailed(){
+    fun imageLoadFailed() {
         viewModel.checkOnlineState()
     }
 
@@ -181,16 +180,6 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         }
     }
 
-//    private fun setRecycleViewSettings() {
-//        binding.catListRecyclerView.apply {
-//            layoutManager = GridLayoutManager(context, columnCount)
-//            adapter = CatListRecyclerViewAdapter(
-//                holderSize,
-//                { onClickOnCat(it) },
-//                { getCurrentFragment() })
-//        }
-//    }
-
     private fun registerObserverItems() {
         activity?.let { activity ->
             viewModel.items.observe(activity,
@@ -202,11 +191,30 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         }
     }
 
+    private fun startCollectItems() {
+        lifecycleScope.launchWhenCreated {
+            viewModel.getCatListData().collectLatest {
+                showCatsRecyclerView()
+                hideLoadAnimation()
+                adapter.submitData(it)
+            }
+        }
+        lifecycleScope.launchWhenCreated {
+            viewModel.getListData().collectLatest {
+                recyclerViewAdapter.submitData(it)
+            }
+        }
+
+    }
+
+
     private fun updateUI(items: List<Cat>) {
         showCatsRecyclerView()
         hideLoadAnimation()
         binding.catListRecyclerView.adapter.apply {
-            if (this is CatListRecyclerViewAdapter) update(items)
+            if (this is CatListRecyclerViewAdapter) {
+                update(items)
+            }
         }
     }
 

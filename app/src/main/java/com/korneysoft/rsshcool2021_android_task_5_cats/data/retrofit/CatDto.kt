@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class CatData(
+data class CatDto(
     @Json(name = "id") val id: String,
     @Json(name = "url") val url: String?,
     @Json(name = "width") val width: Int?,
@@ -12,7 +12,7 @@ data class CatData(
 )
 
 
-internal fun CatData.toCat(): Cat {
+internal fun CatDto.toCat(): Cat {
     return Cat(
         id = this.id,
         imageUrl = this.url,

@@ -8,21 +8,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Repository
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.CatPageSource
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TimeoutListener
 import com.korneysoft.rsshcool2021_android_task_5_cats.internet_utils.isInternetAvailable
 import com.korneysoft.rsshcool2021_android_task_5_cats.ui.CatListFragment
-import java.util.concurrent.Flow
+import kotlinx.coroutines.flow.Flow
+
 
 private const val TAG = "T5-CatViewModel"
 
-class CatViewModel(application: Application) : AndroidViewModel(application), TimeoutListener {
+class CatViewModel(application: Application) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
     private val context: Context = application.applicationContext
@@ -43,23 +40,12 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
 
     init {
         Repository.initialize()
-        repository.setTimeoutListener(this)
         _showingCat.value = null
     }
 
 
-    fun getCatListData(): Flow<PagingData<Cat>> {
-        return Pager(config = PagingConfig(pageSize = 20, maxSize = 200),
-            pagingSourceFactory = { CatPageSource(repository.service) }
-        ).flow.cachedIn(viewModelScope)
-
-        fun getListData(): Flow<PagingData<CharacterData>> {
-            return Pager(config = PagingConfig(pageSize = 20, maxSize = 200),
-                pagingSourceFactory = { CharacterPagingSource(retroService) })
-                .flow.cachedIn(viewModelScope)
-        }
-
-
+    suspend fun getListData(): Flow<PagingData<Cat>> {
+        return repository.getDataPager().flow.cachedIn(viewModelScope)
     }
 
 //    private fun updateData() {
@@ -93,12 +79,6 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
 //
 //    }
 
-
-    override fun onConnectionTimeout() {
-        Log.d(TAG, "onConnectionTimeout")
-        checkOnlineState()
-    }
-
     fun setShowingCat(index: Int?, getGridFragment: () -> CatListFragment?) {
         _getGridFragment = getGridFragment
         _showingCat.value = index
@@ -107,7 +87,8 @@ class CatViewModel(application: Application) : AndroidViewModel(application), Ti
     fun getPositionShowingCat(): LiveData<Int?> = showingCat
 
     fun getCatFromPosition(position: Int): Cat? {
-        return _items.value?.get(position)
+        return null
+        // return _items.value?.get(position)
     }
 
     fun checkOnlineState(): Boolean {

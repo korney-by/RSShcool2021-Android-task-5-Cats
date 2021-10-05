@@ -137,14 +137,14 @@ class CatDetailsFragment : Fragment() {
     }
 
     private fun registerObserverItems() {
-        activity?.let { activity ->
-            viewModel.items.observe(activity,
-                Observer {
-                    it ?: return@Observer
-                    _binding ?: return@Observer
-                    updateUI(it)
-                })
-        }
+//        activity?.let { activity ->
+//            viewModel.items.observe(activity,
+//                Observer {
+//                    it ?: return@Observer
+//                    _binding ?: return@Observer
+//                    updateUI(it)
+//                })
+//        }
     }
 
     private fun updateUI(items: List<Cat>) {

@@ -1,6 +1,7 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
+import java.security.AccessController.getContext
 
 private const val TAG = "T5 - CatListRVAdapter"
 
@@ -27,8 +29,6 @@ class CatListRecyclerViewAdapter(
     private val onCatListener: OnCatListener,
     private val getParentFragment: () -> CatListFragment
 ) : PagingDataAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
-
-   // private var itemsSize = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
         return CatHolder(
@@ -41,22 +41,9 @@ class CatListRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
-        // val cat: Cat = items[position] //getItem(position)
         val cat = getItem(position)
         holder.bind(cat, holderSize)
     }
-
-//    override fun getItemCount(): Int {
-//        // items.size
-//        return itemsSize
-//    }
-
-//    suspend fun update(newItems: List<Cat>) {
-//        submitData(newItems)
-//       // itemsSize = newItems.size
-//        // items.addAll(newItems)
-//        // notifyDataSetChanged()
-//    }
 
     interface OnCatListener {
         fun onCatClick(position: Int)
@@ -73,6 +60,7 @@ class CatListRecyclerViewAdapter(
         }
 
         override fun onClick(p0: View?) {
+            Log.d(TAG," Click - $bindingAdapterPosition")
             onCatListener.onCatClick(bindingAdapterPosition)
         }
 
@@ -92,20 +80,21 @@ class CatListRecyclerViewAdapter(
                     binding.textLoading.visibility = View.VISIBLE
                     binding.textSize.text = null
                 } else {
+                    binding.textLoading.visibility = View.INVISIBLE
                     imageView.transitionName = cat.imageUrl
                     imageView.tag = cat.id
-                    binding.textLoading.visibility = View.GONE
-                    binding.textSize.text = "${cat.id} - ${cat.width}x${cat.height}"
+                    binding.textSize.text =
+                        getParentFragment().getString(R.string.image_info,cat.width,cat.height)
                 }
             }
         }
 
         private fun loadImage(cat: Cat) {
+            val parentFragment=getParentFragment()
             cat.imageUrl ?: return
             val imageView = binding.imageView
             Glide.with(imageView.context.applicationContext)
                 .load(cat.imageUrl)
-                //.apply(RequestOptions.centerCropTransform())
                 .centerCrop()
                 .error(R.drawable.ic_baseline_close_24)
                 .listener(object : RequestListener<Drawable> {
@@ -115,8 +104,9 @@ class CatListRecyclerViewAdapter(
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        getParentFragment().imageLoadFailed()
-                        getParentFragment().startPostponedEnterTransition()
+                        binding.textLoading.visibility = View.INVISIBLE
+                        parentFragment.imageLoadFailed()
+                        parentFragment.startPostponedEnterTransition()
                         return false
                     }
 
@@ -127,8 +117,8 @@ class CatListRecyclerViewAdapter(
                         p3: DataSource?,
                         p4: Boolean
                     ): Boolean {
-                        getParentFragment().startPostponedEnterTransition()
                         setContentHolder(cat)
+                        parentFragment.startPostponedEnterTransition()
                         return false
                     }
                 })

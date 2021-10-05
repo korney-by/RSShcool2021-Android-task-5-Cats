@@ -2,7 +2,6 @@ package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.os.Build
 import android.os.Bundle
-import android.provider.SyncStateContract.Helpers.update
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,15 +10,14 @@ import android.view.ViewGroup
 import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "T5-CatListFragment: "
 
@@ -58,16 +56,15 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         binding.catListRecyclerView.layoutManager = GridLayoutManager(context, columnCount)
         binding.catListRecyclerView.adapter = adapter
 
-        registerObserverItems()
+        startCollectItems()
 
         prepareTransition()
         if (savedInstanceState == null) {
             postponeEnterTransition()
         }
         return view
+
     }
-
-
 
     private fun prepareTransition() {
         exitTransition = TransitionInflater.from(context)
@@ -180,40 +177,14 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         }
     }
 
-    private fun registerObserverItems() {
-        activity?.let { activity ->
-            viewModel.items.observe(activity,
-                Observer {
-                    it ?: return@Observer
-                    _binding ?: return@Observer
-                    updateUI(it)
-                })
-        }
-    }
-
     private fun startCollectItems() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.getCatListData().collectLatest {
-                showCatsRecyclerView()
-                hideLoadAnimation()
-                adapter.submitData(it)
-            }
-        }
+        Log.d(TAG,"startCollectItems")
         lifecycleScope.launchWhenCreated {
             viewModel.getListData().collectLatest {
-                recyclerViewAdapter.submitData(it)
-            }
-        }
-
-    }
-
-
-    private fun updateUI(items: List<Cat>) {
-        showCatsRecyclerView()
-        hideLoadAnimation()
-        binding.catListRecyclerView.adapter.apply {
-            if (this is CatListRecyclerViewAdapter) {
-                update(items)
+                showCatsRecyclerView()
+                hideLoadAnimation()
+                Log.d(TAG,"submitData(it)")
+                adapter.submitData(it)
             }
         }
     }

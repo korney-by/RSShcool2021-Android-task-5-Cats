@@ -6,4 +6,5 @@
     <string name="permission_write_granted">Разрешение на запись предоставлено. Теперь вы можете сохранять картинки</string>
     <string name="connection_off">Нет связи с сервером</string>
     <string name="try_again">попробовать снова</string>
+    <string name="image_info">%1$d x %2$d</string>
 </resources>

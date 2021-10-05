@@ -11,7 +11,6 @@ data class CatDto(
     @Json(name = "height") val height: Int?
 )
 
-
 internal fun CatDto.toCat(): Cat {
     return Cat(
         id = this.id,

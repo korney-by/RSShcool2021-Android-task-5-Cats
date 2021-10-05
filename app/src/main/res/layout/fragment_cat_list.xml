@@ -11,6 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/backgroundLoadAnimation"
+        android:src="@drawable/black_cat"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/cat_list_recycler_view"
         app:layout_constraintEnd_toEndOf="@+id/cat_list_recycler_view"

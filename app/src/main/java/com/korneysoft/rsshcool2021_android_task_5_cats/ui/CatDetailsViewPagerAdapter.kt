@@ -1,25 +1,27 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.toCatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatDetailsBinding
 
-class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) :
-    ListAdapter<Cat, CatDetailsViewPagerAdapter.PagerHolder>(itemComparator) {
+private const val TAG = "T5-CatDetViewPagerAdapt"
 
-    private var itemsSize = 0
+class CatDetailsViewPagerAdapter(private val getParentFragment: () -> CatDetailsFragment) :
+    PagingDataAdapter<Cat, CatDetailsViewPagerAdapter.PagerHolder>(itemComparator) {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerHolder {
         return PagerHolder(
@@ -27,28 +29,34 @@ class CatDetailsViewPagerAdapter(private val getParentFragment: () -> Fragment) 
         )
     }
 
+    private fun toRememberHolder(position: Int, url: String?) {
+        getParentFragment().toRememberUrl(position, url)
+    }
+
     override fun onBindViewHolder(holder: PagerHolder, position: Int) {
-        val cat: Cat = getItem(position)
+        val cat: Cat? = getItem(position)
+
+        Log.d(TAG, cat?.toCatIndexed(position).toString())
+        toRememberHolder(position, cat?.imageUrl)
         holder.bind(cat)
     }
 
-    override fun getItemCount(): Int {
-        return itemsSize
-    }
-
-    fun update(newItems: List<Cat>) {
-        itemsSize = newItems.size
-        submitList(newItems)
-    }
 
     inner class PagerHolder(private val binding: ViewCatDetailsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(cat: Cat) {
+        fun bind(cat: Cat?) {
             binding.apply {
-                imageViewDetail.transitionName = cat.imageUrl
-                imageViewDetail.tag = cat.id
-                showCat(imageViewDetail, cat)
+                if (cat == null) {
+                    imageViewDetail.transitionName = ""
+                    imageViewDetail.tag = ""
+                    //showCat(imageViewDetail, cat)
+                } else {
+                    Log.d(TAG,"BIND - "+ cat.toString())
+                    imageViewDetail.transitionName = cat.imageUrl
+                    imageViewDetail.tag = cat.id
+                    showCat(imageViewDetail, cat)
+                }
             }
         }
 

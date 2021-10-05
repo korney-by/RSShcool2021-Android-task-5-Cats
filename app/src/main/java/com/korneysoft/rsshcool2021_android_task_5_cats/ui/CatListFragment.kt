@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.collectLatest
 private const val TAG = "T5-CatListFragment: "
 
 class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
+
     private var _binding: FragmentCatListBinding? = null
     private val binding get() = _binding!!
     private val gridSettings by lazy { GridSettings() }
@@ -76,8 +78,8 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
                     names: List<String?>,
                     sharedElements: MutableMap<String?, View?>
                 ) {
-                    viewModel.lastShowingCat?.let { position ->
-                        val view = getView(position)
+                    viewModel.lastShowingCat?.let { cat ->
+                        val view = getView(cat)
                         view?.let {
                             sharedElements[names[0]] = view
                         }
@@ -105,9 +107,8 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     fun getSelectedView(): View? = selectedView
 
-    private fun getView(position: Int): View? {
-        val cat = viewModel.getCatFromPosition(position)
-        return binding.catListRecyclerView.findViewWithTag(cat?.id)
+    private fun getView(catIndexed: CatIndexed): View? {
+        return binding.catListRecyclerView.findViewWithTag(catIndexed.id)
     }
 
     private fun getCurrentFragment() = this
@@ -124,25 +125,25 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     }
 
     fun prescrollForCorrectAnimation() {
-        val position = viewModel.lastShowingCat ?: return
-        if (!isCatPositionVisible(position)) {
-            binding.catListRecyclerView.scrollToPosition(position)
+        val catIndexed = viewModel.lastShowingCat ?: return
+        if (!isCatPositionVisible(catIndexed.index)) {
+            binding.catListRecyclerView.scrollToPosition(catIndexed.index)
         }
     }
 
     private fun scrollToPositionCurrentCat() {
-        val position = viewModel.lastShowingCat ?: return
+        val catIndexed = viewModel.lastShowingCat ?: return
         val layoutManager = binding.catListRecyclerView.layoutManager ?: return
 
-        val viewAtPosition = layoutManager.findViewByPosition(position)
+        val viewAtPosition = layoutManager.findViewByPosition(catIndexed.index)
         if (viewAtPosition == null) {
-            binding.catListRecyclerView.scrollToPosition(position)
+            binding.catListRecyclerView.scrollToPosition(catIndexed.index)
             saveVisiblePosition()
             return
         }
 
         if (layoutManager.isViewPartiallyVisible(viewAtPosition, false, true)) {
-            layoutManager.scrollToPosition(position)
+            layoutManager.scrollToPosition(catIndexed.index)
         }
     }
 
@@ -178,22 +179,34 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     }
 
     private fun startCollectItems() {
-        Log.d(TAG,"startCollectItems")
+        Log.d(TAG, "startCollectItems")
         lifecycleScope.launchWhenCreated {
             viewModel.getListData().collectLatest {
                 showCatsRecyclerView()
                 hideLoadAnimation()
-                Log.d(TAG,"submitData(it)")
+                Log.d(TAG, "submitData(it)")
                 adapter.submitData(it)
             }
         }
     }
 
-    override fun onCatClick(position: Int) {
-        Log.d(TAG, "OnClick $position")
-        selectedView = getView(position)
+    fun toRememberUrl(position: Int, url: String?) {
+        viewModel.toRememberUrl(position, url)
+    }
+
+//    override fun onCatClick(position: Int) {
+//        Log.d(TAG, "OnClick $position")
+//        selectedView = getView(position)
+//        if (selectedView != null) {
+//            viewModel.setShowingCat(position) { this@CatListFragment }
+//        }
+//    }
+
+    override fun onCatClick(catIndexed: CatIndexed) {
+        Log.d(TAG, "OnClick $catIndexed")
+        selectedView = getView(catIndexed)
         if (selectedView != null) {
-            viewModel.setShowingCat(position) { this@CatListFragment }
+            viewModel.setShowingCat(catIndexed) { this@CatListFragment }
         }
     }
 
@@ -231,4 +244,6 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
             }
         }
     }
+
+
 }

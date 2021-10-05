@@ -21,7 +21,8 @@ import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE as WRITE_EXTERNAL_STORAGE
 
 
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
     }
 
     private fun registerObserverShowingCat() {
-        viewModel.getPositionShowingCat().observe(this,
+        viewModel.getShownCat().observe(this,
             Observer {
                 it ?: return@Observer
                 loadCatDetailsFragment(it, viewModel.getGridFragment)
@@ -103,9 +104,9 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
         )
     }
 
-    private fun loadCatDetailsFragment(position: Int, sourceFragment: CatListFragment?) {
+    private fun loadCatDetailsFragment(catIndexed: CatIndexed, sourceFragment: CatListFragment?) {
         sourceFragment ?: return
-        viewModel.lastShowingCat = position
+        viewModel.lastShowingCat = catIndexed
         val destinationFragment: Fragment = CatDetailsFragment.newInstance()
 
         sourceFragment.getSelectedView()?.let { view ->

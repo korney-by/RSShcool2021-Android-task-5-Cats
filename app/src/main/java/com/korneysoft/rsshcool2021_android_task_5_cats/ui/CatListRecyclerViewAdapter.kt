@@ -6,21 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.toCatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
-import java.security.AccessController.getContext
 
 private const val TAG = "T5 - CatListRVAdapter"
 
@@ -40,13 +38,18 @@ class CatListRecyclerViewAdapter(
         }
     }
 
+    private fun toRememberHolder(position: Int, url: String) {
+        getParentFragment().toRememberUrl(position, url)
+    }
+
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
         val cat = getItem(position)
+        getParentFragment().toRememberUrl(position, cat?.imageUrl)
         holder.bind(cat, holderSize)
     }
 
     interface OnCatListener {
-        fun onCatClick(position: Int)
+        fun onCatClick(catIndexed: CatIndexed)
     }
 
     inner class CatHolder(
@@ -60,8 +63,11 @@ class CatListRecyclerViewAdapter(
         }
 
         override fun onClick(p0: View?) {
-            Log.d(TAG," Click - $bindingAdapterPosition")
-            onCatListener.onCatClick(bindingAdapterPosition)
+            Log.d(TAG, " Click - $bindingAdapterPosition")
+            val catIndexed = getItem(bindingAdapterPosition)?.toCatIndexed(bindingAdapterPosition)
+            catIndexed?.let {
+                onCatListener.onCatClick(catIndexed)
+            }
         }
 
         fun bind(cat: Cat?, holderSize: Int) {
@@ -84,13 +90,18 @@ class CatListRecyclerViewAdapter(
                     imageView.transitionName = cat.imageUrl
                     imageView.tag = cat.id
                     binding.textSize.text =
-                        getParentFragment().getString(R.string.image_info,cat.width,cat.height)
+                        getParentFragment().getString(
+                            R.string.image_info,
+                            cat.id,
+                            cat.width,
+                            cat.height
+                        )
                 }
             }
         }
 
         private fun loadImage(cat: Cat) {
-            val parentFragment=getParentFragment()
+            val parentFragment = getParentFragment()
             cat.imageUrl ?: return
             val imageView = binding.imageView
             Glide.with(imageView.context.applicationContext)

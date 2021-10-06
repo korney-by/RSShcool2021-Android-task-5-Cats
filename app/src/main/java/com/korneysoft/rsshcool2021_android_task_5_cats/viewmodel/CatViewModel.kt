@@ -36,8 +36,6 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
     val _isOnline = MutableLiveData<Boolean>(true)
     val isOnline: LiveData<Boolean> get() = _isOnline
 
-    private val catIndexMap = mutableMapOf<Int, String>()
-
     private var _getGridFragment: (() -> CatListFragment?)? = null
     val getGridFragment get() = _getGridFragment?.invoke()
 
@@ -46,11 +44,9 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
         _showingCat.value = null
     }
 
-
     suspend fun getListData(): Flow<PagingData<Cat>> {
         return repository.getDataPager().flow.cachedIn(viewModelScope)
     }
-
 
     fun setShowingCat(catIndexed: CatIndexed?, getGridFragment: () -> CatListFragment?) {
         _getGridFragment = getGridFragment
@@ -58,11 +54,6 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getShownCat(): LiveData<CatIndexed?> = showingCat
-
-//    fun getCatFromPosition(position: Int): Cat? {
-//        return null
-//        // return _items.value?.get(position)
-//    }
 
     fun checkOnlineState(): Boolean {
         val isOnlineValue = isInternetAvailable(context)
@@ -72,19 +63,4 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
         _isOnline.value = isOnlineValue
         return isOnlineValue
     }
-
-    fun getUrl(position: Int): String? {
-        return if (catIndexMap.containsKey(position)) {
-            catIndexMap.getValue(position)
-        } else null
-    }
-
-    fun toRememberUrl(position: Int, url: String?) {
-        url ?: return
-        var tag = Uri.parse(url).getLastPathSegment()!!
-        tag=tag.substring(0, tag.lastIndexOf('.'))
-        if (!catIndexMap.containsKey(position)) catIndexMap.put(position, tag)
-    //        if (!catIndexMap.containsKey(position)) catIndexMap.put(position, url)
-    }
-
 }

@@ -190,18 +190,6 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         }
     }
 
-    fun toRememberUrl(position: Int, url: String?) {
-        viewModel.toRememberUrl(position, url)
-    }
-
-//    override fun onCatClick(position: Int) {
-//        Log.d(TAG, "OnClick $position")
-//        selectedView = getView(position)
-//        if (selectedView != null) {
-//            viewModel.setShowingCat(position) { this@CatListFragment }
-//        }
-//    }
-
     override fun onCatClick(catIndexed: CatIndexed) {
         Log.d(TAG, "OnClick $catIndexed")
         selectedView = getView(catIndexed)

@@ -38,13 +38,8 @@ class CatListRecyclerViewAdapter(
         }
     }
 
-    private fun toRememberHolder(position: Int, url: String) {
-        getParentFragment().toRememberUrl(position, url)
-    }
-
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
         val cat = getItem(position)
-        getParentFragment().toRememberUrl(position, cat?.imageUrl)
         holder.bind(cat, holderSize)
     }
 

@@ -1,6 +1,5 @@
-package com.korneysoft.rsshcool2021_android_task_5_cats
+package com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit
 
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.CatDto
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -9,7 +8,6 @@ import retrofit2.http.Headers
 import retrofit2.http.Query
 
 private const val API_KEY = "b26ab8aa-7ee7-408e-b653-93164171b8a7"
-private const val API_KEY_QUERY_PARAM_NAME = "api_key"
 private const val BASE_URL = "https://api.thecatapi.com"
 
 interface TheCatApiService {

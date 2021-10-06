@@ -23,13 +23,13 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.interfaces.SaveImageInter
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import kotlin.collections.set
 
-private val TAG = "T5-CatDetailsFragment"
+private const val TAG = "T5-CatDetailsFragment"
 
 class CatDetailsFragment : Fragment() {
 
     private var _binding: FragmentCatDetailsBinding? = null
     private val binding get() = _binding!!
-    val viewModel: CatViewModel by activityViewModels()
+    private val viewModel: CatViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +95,7 @@ class CatDetailsFragment : Fragment() {
     }
 
     private fun setListenerForSaveButton() {
-        binding.floatingButtonSave.setOnClickListener() {
+        binding.floatingButtonSave.setOnClickListener {
             activity?.let { activity ->
                 if (activity !is SaveImageInterface) {
                     return@setOnClickListener

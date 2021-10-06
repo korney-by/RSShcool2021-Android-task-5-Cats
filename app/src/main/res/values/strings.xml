@@ -6,6 +6,6 @@
     <string name="connection_off">No connection to the server</string>
     <string name="try_again">Try again</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="image_info">id: %1$s - %2$dx%3$d</string>
+    <string name="image_info">id: %1$s    %2$dx%3$d</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

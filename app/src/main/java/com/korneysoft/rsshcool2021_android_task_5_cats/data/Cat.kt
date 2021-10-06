@@ -5,7 +5,7 @@ data class Cat(
     val imageUrl: String?,
     val width: Int?,
     val height: Int?
-){
+) {
     override fun toString(): String {
         return "id=$id"
     }
@@ -26,7 +26,7 @@ data class CatIndexed(
     val id: String,
     val imageUrl: String?,
     val width: Int?,
-    val height: Int?,
+    val height: Int?
 ) {
     override fun toString(): String {
         return "id=$id, index=$index"

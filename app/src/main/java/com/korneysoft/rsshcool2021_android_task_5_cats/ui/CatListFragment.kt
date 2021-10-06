@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
@@ -39,10 +40,6 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     private var holderSize = 0
     private var selectedView: View? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,20 +52,34 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
         columnCount = gridSettings.columnCount
         holderSize = gridSettings.cellSize
-        binding.catListRecyclerView.layoutManager = GridLayoutManager(context, columnCount)
-        binding.catListRecyclerView.adapter = adapter
 
+        val layout = GridLayoutManager(context, columnCount)
+        // NotifyingGridLayoutManager(context, columnCount)
+        // layout.onLayoutCompleteCallback = onLayoutCompleted(layout)
+        binding.catListRecyclerView.layoutManager = layout
+        binding.catListRecyclerView.adapter = adapter
         startCollectItems()
 
-        prepareTransition()
+        // setScrollRVListener()
+        prepareSharedElementTransition()
         if (savedInstanceState == null) {
             postponeEnterTransition()
         }
         return view
-
     }
 
-    private fun prepareTransition() {
+    private fun onLayoutCompleted(layout: NotifyingGridLayoutManager): OnLayoutCompleteCallback {
+        return object : OnLayoutCompleteCallback {
+            override fun onLayoutComplete() {
+//                binding.catListRecyclerView.isNestedScrollingEnabled = !(layout.isLastItemCompletelyVisible())
+//                startPostponedEnterTransition()
+//                scrollToPositionCurrentCat()
+                val i = 1
+            }
+        }
+    }
+
+    private fun prepareSharedElementTransition() {
         exitTransition = TransitionInflater.from(context)
             .inflateTransition(R.transition.grid_exit_transition)
 
@@ -91,7 +102,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        prescrollForCorrectAnimation()
+        // prescrollForCorrectAnimation()
     }
 
     override fun onResume() {
@@ -103,6 +114,20 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         saveVisiblePosition()
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setScrollRVListener() {
+        binding.catListRecyclerView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                // if (newState == RecyclerView.SCROLL_STATE_SETTLING) startPostponedEnterTransition()
+            }
+        })
     }
 
     fun getSelectedView(): View? = selectedView
@@ -180,8 +205,8 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     private fun startCollectItems() {
         Log.d(TAG, "startCollectItems")
-        lifecycleScope.launchWhenCreated {
-            viewModel.getListData().collectLatest {
+        lifecycleScope.launchWhenStarted { // }WhenCreated {
+            viewModel.getListData().collectLatest { //
                 showCatsRecyclerView()
                 hideLoadAnimation()
                 Log.d(TAG, "submitData(it)")
@@ -232,6 +257,4 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
             }
         }
     }
-
-
 }

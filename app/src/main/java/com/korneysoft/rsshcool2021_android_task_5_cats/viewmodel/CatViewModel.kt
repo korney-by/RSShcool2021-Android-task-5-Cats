@@ -3,7 +3,6 @@ package com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,7 +15,6 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.Repository
 import com.korneysoft.rsshcool2021_android_task_5_cats.internet_utils.isInternetAvailable
 import com.korneysoft.rsshcool2021_android_task_5_cats.ui.CatListFragment
 import kotlinx.coroutines.flow.Flow
-
 
 private const val TAG = "T5-CatViewModel"
 
@@ -57,9 +55,6 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun checkOnlineState(): Boolean {
         val isOnlineValue = isInternetAvailable(context)
-        if (isOnlineValue && isOnlineValue != _isOnline.value) {
-            //updateData()
-        }
         _isOnline.value = isOnlineValue
         return isOnlineValue
     }

@@ -1,30 +1,28 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.app.DownloadManager
+import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.transition.TransitionSet
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.interfaces.SaveImageInterface
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
-
-import android.app.DownloadManager
-import android.content.Context
-import android.net.Uri
-import android.os.Environment
-import android.widget.Toast
-import androidx.fragment.app.FragmentManager
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE as WRITE_EXTERNAL_STORAGE
-
 
 private const val WRITE_PERMISSION_REQUEST_CODE = 21021
 
@@ -58,17 +56,13 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
 
     private fun registerObserverStateOnline() {
         viewModel.isOnline.observe(this,
-            Observer {
+            {
                 if (!it) {
                     loadOfflineFragment()
                 } else {
                     closeOfflineFragment()
                 }
             })
-    }
-
-    private fun isCatDetailsFragmentHide(): Boolean {
-        return (supportFragmentManager.findFragmentById(R.id.cat_details_fragment) == null)
     }
 
     private fun loadCatListFragment() {
@@ -127,7 +121,6 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
                 .addToBackStack(CatDetailsFragment::class.java.simpleName)
                 .commit()
         }
-
     }
 
     override fun setNavigationBarColor() {
@@ -153,10 +146,10 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
         return true
     }
 
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
@@ -189,7 +182,9 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
             val request = DownloadManager.Request(Uri.parse(url))
                 .setTitle(filename)
                 .setDescription("Download: $filename")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setNotificationVisibility(
+                    DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+                )
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -198,21 +193,7 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
             }
 
             val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val downloadId = manager.enqueue(request)
-
-//            val broadcastReceiver = object : BroadcastReceiver() {
-//                override fun onReceive(context: Context?, intent: Intent?) {
-//                    intent ?: return
-//                    val id: Long = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-//                    if (id == downloadId) {
-//                        Toast.makeText(
-//                            this@CatDetailsFragment.context?.applicationContext,
-//                            "$filename download completed",
-//                            Toast.LENGTH_LONG
-//                        ).show()
-//                    }
-//                }
-//            }
+            manager.enqueue(request)
         }
     }
 }

@@ -2,9 +2,9 @@ package com.korneysoft.rsshcool2021_android_task_5_cats.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.korneysoft.rsshcool2021_android_task_5_cats.TheCatApiImpl
-import com.korneysoft.rsshcool2021_android_task_5_cats.TheCatApiService
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.CatPagingSource
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TheCatApiImpl
+import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TheCatApiService
 
 class Repository : RepositoryInterface {
     private val service: TheCatApiService = TheCatApiImpl.service
@@ -13,13 +13,14 @@ class Repository : RepositoryInterface {
     override fun getDataPager(): Pager<Int, Cat> = pager
 
     private fun initDataPager(): Pager<Int, Cat> {
-        val differentPageSize = 24// (20..35).random()
-        return Pager(config = PagingConfig(pageSize = differentPageSize),
-            pagingSourceFactory = { CatPagingSource(service, differentPageSize) })
+
+        return Pager(config = PagingConfig(pageSize = PAGE_SIZE),
+            pagingSourceFactory = { CatPagingSource(service, PAGE_SIZE) })
     }
 
     companion object {
         private var INSTANCE: Repository? = null
+        private var PAGE_SIZE=24
 
         fun initialize() {
             if (INSTANCE == null) {
@@ -31,6 +32,4 @@ class Repository : RepositoryInterface {
             return INSTANCE ?: throw IllegalStateException("ItemListRepository must be initialised")
         }
     }
-
-
 }

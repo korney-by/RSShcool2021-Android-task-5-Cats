@@ -7,4 +7,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "RSShcool2021-Android-task-5-Cats"
-include ':app'
+include (":app")

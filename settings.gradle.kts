@@ -4,6 +4,9 @@ pluginManagement {
         google()
         mavenCentral()
     }
+
+
+
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("com.android")) {

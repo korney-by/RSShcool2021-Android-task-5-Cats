@@ -20,7 +20,7 @@ class Repository : RepositoryInterface {
 
     companion object {
         private var INSTANCE: Repository? = null
-        private var PAGE_SIZE=24
+        private var PAGE_SIZE = 24
 
         fun initialize() {
             if (INSTANCE == null) {

@@ -1,20 +1,22 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    val kotlin_version = "1.5.31"
+    val kotlinVersion = "1.5.31"
 
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath("com.android.tools.build:gradle:7.0.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:$kotlin_version")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version-RC")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion-RC")
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
-
 
 plugins {
     id("io.gitlab.arturbosch.detekt") version "1.18.1"
@@ -22,7 +24,7 @@ plugins {
 }
 
 subprojects {
-    apply (plugin ="org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
     ktlint {
         debug.apply { false }
     }
@@ -44,7 +46,7 @@ detekt {
     }
 }
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-     jvmTarget = "1.8"
+    jvmTarget = "1.8"
 }
 
 tasks.register("clean", Delete::class) {

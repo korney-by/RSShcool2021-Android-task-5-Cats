@@ -2,40 +2,6 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
-
-    id("io.gitlab.arturbosch.detekt") version "1.18.1"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
-}
-
-repositories {
-    google()
-    mavenCentral()
-}
-
-subprojects {
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    ktlint {
-        debug.apply { false }
-    }
-}
-
-detekt {
-    toolVersion = "1.18.1"
-    config = files("config/detekt/detekt.yml")
-    buildUponDefaultConfig = true
-    failFast = true
-
-    input = files("app/src/main/java", "app/src/main/kotlin")
-
-    reports {
-        html {
-            enabled = true
-            destination = file("app/build/detekt/detekt.html")
-        }
-    }
-}
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    jvmTarget = "1.8"
 }
 
 android {
@@ -80,7 +46,6 @@ dependencies {
 
     val kotlinVersion = "1.5.31"
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
     implementation("androidx.legacy:legacy-support-v4:1.0.0")

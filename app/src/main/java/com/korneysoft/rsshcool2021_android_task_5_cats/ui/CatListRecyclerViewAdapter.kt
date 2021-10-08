@@ -23,9 +23,9 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBindin
 private const val TAG = "T5 - CatListRVAdapter"
 
 class CatListRecyclerViewAdapter(
-    private val holderSize: Int,
-    private val onCatListener: OnCatListener,
-    private val getParentFragment: () -> CatListFragment
+    private var holderSize: Int,
+    private var onCatListener: OnCatListener,
+    private var getParentFragment: () -> CatListFragment
 ) : PagingDataAdapter<Cat, CatListRecyclerViewAdapter.CatHolder>(itemComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatHolder {
@@ -33,14 +33,24 @@ class CatListRecyclerViewAdapter(
             ViewCatBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onCatListener
         ).apply {
-            itemView.minimumHeight = holderSize
-            itemView.minimumWidth = holderSize
+//            itemView.minimumHeight = holderSize
+//            itemView.minimumWidth = holderSize
         }
     }
 
     override fun onBindViewHolder(holder: CatHolder, position: Int) {
         val cat = getItem(position)
         holder.bind(cat, holderSize)
+    }
+
+    fun reinitAdapter(
+        holderSize: Int,
+        onCatListener: OnCatListener,
+        getParentFragment: () -> CatListFragment
+    ) {
+        this.holderSize = holderSize
+        this.onCatListener = onCatListener
+        this.getParentFragment = getParentFragment
     }
 
     interface OnCatListener {
@@ -66,31 +76,39 @@ class CatListRecyclerViewAdapter(
         }
 
         fun bind(cat: Cat?, holderSize: Int) {
-            setContentHolder(null)
             setSizeImageView(binding.imageView, holderSize)
+            setTagContentHolder(cat)
+            setViewContentHolder(null)
             cat?.let {
                 loadImage(it)
             }
         }
 
-        private fun setContentHolder(cat: Cat?) {
+        private fun setTagContentHolder(cat: Cat?) {
             binding.apply {
                 if (cat == null) {
                     imageView.transitionName = null
                     imageView.tag = null
+                } else {
+                    imageView.transitionName = cat.imageUrl
+                    imageView.tag = cat.id
+                }
+            }
+        }
+        private fun setViewContentHolder(cat: Cat?) {
+            binding.apply {
+                if (cat == null) {
                     binding.textLoading.visibility = View.VISIBLE
                     binding.textSize.text = null
                 } else {
                     binding.textLoading.visibility = View.INVISIBLE
-                    imageView.transitionName = cat.imageUrl
-                    imageView.tag = cat.id
-                    binding.textSize.text =
-                        getParentFragment().getString(
-                            R.string.image_info,
-                            cat.id,
-                            cat.width,
-                            cat.height
-                        )
+                    binding.textSize.text = "№ ${bindingAdapterPosition + 1}"
+//                        getParentFragment().getString(
+//                            R.string.image_info,
+//                            cat.id,
+//                            cat.width,
+//                            cat.height
+//                        )
                 }
             }
         }
@@ -123,7 +141,7 @@ class CatListRecyclerViewAdapter(
                         p3: DataSource?,
                         p4: Boolean
                     ): Boolean {
-                        setContentHolder(cat)
+                        setViewContentHolder(cat)
                         parentFragment.startPostponedEnterTransition()
                         return false
                     }

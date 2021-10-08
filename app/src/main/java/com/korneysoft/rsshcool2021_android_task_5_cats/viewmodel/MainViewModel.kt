@@ -28,26 +28,19 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
     val showingCat: LiveData<CatIndexed?> get() = _showingCat
     var lastShowingCat: CatIndexed? = null
 
-    var firstGridVisiblePosition: Int = -1
-    var lastGridVisiblePosition: Int = -1
-
     val _isOnline = MutableLiveData<Boolean>(true)
     val isOnline: LiveData<Boolean> get() = _isOnline
-
-    private var _getGridFragment: (() -> CatListFragment?)? = null
-    val getGridFragment get() = _getGridFragment?.invoke()
 
     init {
         Repository.initialize()
         _showingCat.value = null
     }
 
-    suspend fun getListData(): Flow<PagingData<Cat>> {
+    fun getListData(): Flow<PagingData<Cat>> {
         return repository.getDataPager().flow.cachedIn(viewModelScope)
     }
 
-    fun setShowingCat(catIndexed: CatIndexed?, getGridFragment: () -> CatListFragment?) {
-        _getGridFragment = getGridFragment
+    fun setShowingCat(catIndexed: CatIndexed?) {
         _showingCat.value = catIndexed
     }
 

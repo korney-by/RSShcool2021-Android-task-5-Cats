@@ -2,6 +2,8 @@ package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
+import android.transition.TransitionSet
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.view.ViewGroup
 import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatListFragmentViewModel
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -29,16 +33,16 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     private val binding get() = _binding!!
     private val gridSettings by lazy { GridSettings() }
     private val viewModel: CatViewModel by activityViewModels()
-    private val adapter by lazy {
-        CatListRecyclerViewAdapter(
-            holderSize,
-            this
-        ) { getCurrentFragment() }
-    }
-
-    private var columnCount = 0
-    private var holderSize = 0
+    private val viewModelFragment: CatListFragmentViewModel by viewModels()
+    private var layoutManager: GridLayoutManager? = null
     private var selectedView: View? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
+
+        // startCollectItems()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,17 +52,32 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         _binding = FragmentCatListBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        showLoadAnimation()
+        //showLoadAnimation()
+        hideLoadAnimation()
+        showCatsRecyclerView()
 
-        columnCount = gridSettings.columnCount
-        holderSize = gridSettings.cellSize
 
-        val layout = GridLayoutManager(context, columnCount)
-        // NotifyingGridLayoutManager(context, columnCount)
-        // layout.onLayoutCompleteCallback = onLayoutCompleted(layout)
-        binding.catListRecyclerView.layoutManager = layout
-        binding.catListRecyclerView.adapter = adapter
-        startCollectItems()
+        if (staticAdapter == null) {
+            staticAdapter = CatListRecyclerViewAdapter(
+                gridSettings.cellSize,
+                onCatListener = this,
+                { getCurrentFragment() })
+        } else {
+            staticAdapter?.reinitAdapter(
+                gridSettings.cellSize,
+                onCatListener = this,
+                { this })
+        }
+
+        if (viewModelFragment.isNotInitialised) {
+            viewModelFragment.initViewModel(staticAdapter, viewModel)
+        }
+
+        layoutManager = GridLayoutManager(context, gridSettings.columnCount)
+
+        binding.catListRecyclerView.layoutManager = layoutManager
+        binding.catListRecyclerView.adapter = staticAdapter
+
 
         // setScrollRVListener()
         prepareSharedElementTransition()
@@ -68,16 +87,19 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         return view
     }
 
-    private fun onLayoutCompleted(layout: NotifyingGridLayoutManager): OnLayoutCompleteCallback {
-        return object : OnLayoutCompleteCallback {
-            override fun onLayoutComplete() {
-//                binding.catListRecyclerView.isNestedScrollingEnabled = !(layout.isLastItemCompletelyVisible())
-//                startPostponedEnterTransition()
-//                scrollToPositionCurrentCat()
-                val i = 1
-            }
-        }
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        layoutManager?.let {
+//            outState.putParcelable(LIST_STATE_KEY, it.onSaveInstanceState())
+//        }
+//    }
+//
+//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+//        super.onViewStateRestored(savedInstanceState)
+//        savedInstanceState?.let {
+//            catListState = it.getParcelable(LIST_STATE_KEY)
+//        }
+//    }
 
     private fun prepareSharedElementTransition() {
         exitTransition = TransitionInflater.from(context)
@@ -92,6 +114,10 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
                     viewModel.lastShowingCat?.let { cat ->
                         val view = getView(cat)
                         view?.let {
+                            if (exitTransition is TransitionSet) {
+                                (exitTransition as TransitionSet).excludeTarget(view, true)
+                            }
+
                             sharedElements[names[0]] = view
                         }
                     }
@@ -105,9 +131,26 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         // prescrollForCorrectAnimation()
     }
 
+    override fun onPause() {
+        super.onPause()
+//        mBundleRecyclerViewState = Bundle()
+//        val listState = binding.catListRecyclerView.layoutManager?.onSaveInstanceState()
+//        mBundleRecyclerViewState?.putParcelable(LIST_STATE_KEY, listState)
+    }
+
     override fun onResume() {
         super.onResume()
+
+//        mBundleRecyclerViewState?.let {
+//            val listState: Parcelable? = it.getParcelable(LIST_STATE_KEY)
+//            binding.catListRecyclerView.layoutManager?.onRestoreInstanceState(listState)
+//        }
+
+
         scrollToPositionCurrentCat()
+//        catListState?.let{
+//            layoutManager?.onRestoreInstanceState(it);
+//        }
     }
 
     override fun onDestroyView() {
@@ -140,13 +183,13 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     private fun saveVisiblePosition() {
         (binding.catListRecyclerView.layoutManager as GridLayoutManager).let {
-            viewModel.firstGridVisiblePosition = it.findFirstVisibleItemPosition()
-            viewModel.lastGridVisiblePosition = it.findLastVisibleItemPosition()
+            firstGridVisiblePosition = it.findFirstVisibleItemPosition()
+            lastGridVisiblePosition = it.findLastVisibleItemPosition()
         }
     }
 
     private fun isCatPositionVisible(position: Int): Boolean {
-        return position in viewModel.firstGridVisiblePosition..viewModel.lastGridVisiblePosition
+        return position in firstGridVisiblePosition..lastGridVisiblePosition
     }
 
     fun prescrollForCorrectAnimation() {
@@ -203,27 +246,22 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         }
     }
 
-    private fun startCollectItems() {
-        Log.d(TAG, "startCollectItems")
-        lifecycleScope.launchWhenStarted { // }WhenCreated {
-            viewModel.getListData().collectLatest { //
-                showCatsRecyclerView()
-                hideLoadAnimation()
-                Log.d(TAG, "submitData(it)")
-                adapter.submitData(it)
-            }
-        }
-    }
-
     override fun onCatClick(catIndexed: CatIndexed) {
         Log.d(TAG, "OnClick $catIndexed")
         selectedView = getView(catIndexed)
         if (selectedView != null) {
-            viewModel.setShowingCat(catIndexed) { this@CatListFragment }
+            viewModel.setShowingCat(catIndexed)
         }
     }
 
     companion object {
+        const val LIST_STATE_KEY = "LIST_STATE_KEY"
+        private var mBundleRecyclerViewState: Bundle? = null
+        private var staticAdapter: CatListRecyclerViewAdapter? = null
+
+        var firstGridVisiblePosition: Int = -1
+        var lastGridVisiblePosition: Int = -1
+
         @JvmStatic
         fun newInstance() = CatListFragment()
     }

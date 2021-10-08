@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.transition.TransitionSet
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -39,18 +38,18 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
         setContentView(binding.root)
 
         registerObserverStateOnline()
-        registerObserverShowingCat()
+        registerObserverShowingDetailsCat()
         if (savedInstanceState == null) {
             loadCatListFragment()
         }
     }
 
-    private fun registerObserverShowingCat() {
+    private fun registerObserverShowingDetailsCat() {
         viewModel.getShownCat().observe(this,
             Observer {
                 it ?: return@Observer
-                loadCatDetailsFragment(it, viewModel.getGridFragment)
-                viewModel.setShowingCat(null) { null }
+                loadCatDetailsFragment(it)
+                viewModel.setShowingCat(null)
             })
     }
 
@@ -65,6 +64,11 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
             })
     }
 
+    private fun isFragmentVisible(tag: String): Boolean {
+        val fragment = supportFragmentManager.findFragmentByTag(tag)
+        return (fragment != null && fragment.isVisible())
+    }
+
     private fun loadCatListFragment() {
         if (isFragmentVisible(CatListFragment::class.java.simpleName)) return
         val fragment: Fragment =
@@ -73,11 +77,6 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
             .beginTransaction()
             .replace(R.id.fragmentContainerView, fragment, CatListFragment::class.java.simpleName)
             .commit()
-    }
-
-    private fun isFragmentVisible(tag: String): Boolean {
-        val fragment = supportFragmentManager.findFragmentByTag(tag)
-        return (fragment != null && fragment.isVisible())
     }
 
     private fun loadOfflineFragment() {
@@ -98,18 +97,16 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
         )
     }
 
-    private fun loadCatDetailsFragment(catIndexed: CatIndexed, sourceFragment: CatListFragment?) {
-        sourceFragment ?: return
+    private fun loadCatDetailsFragment(catIndexed: CatIndexed) {
         viewModel.lastShowingCat = catIndexed
-        val destinationFragment: Fragment = CatDetailsFragment.newInstance()
+        val fragment =
+            supportFragmentManager.findFragmentByTag(CatListFragment::class.java.simpleName)
+        if (fragment != null && fragment.isVisible) {
+            val sourceFragment = fragment as CatListFragment
+            val destinationFragment: Fragment = CatDetailsFragment.newInstance()
+            val view = sourceFragment.getSelectedView() ?: return
 
-        sourceFragment.getSelectedView()?.let { view ->
-            // Exclude the clicked card from the exit transition (e.g. the card will disappear immediately
-            // instead of fading out with the rest to prevent an overlapping animation of fade and move).
-            sourceFragment.exitTransition?.let { transition ->
-                if (transition is TransitionSet) transition.excludeTarget(view, true)
-            }
-            sourceFragment.parentFragmentManager
+            supportFragmentManager
                 .beginTransaction()
                 .setReorderingAllowed(true)
                 .addSharedElement(view, view.transitionName)
@@ -120,6 +117,7 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
                 )
                 .addToBackStack(CatDetailsFragment::class.java.simpleName)
                 .commit()
+
         }
     }
 
@@ -196,4 +194,11 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
             manager.enqueue(request)
         }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // supportFragmentManager.popBackStack()
+
+    }
+
 }

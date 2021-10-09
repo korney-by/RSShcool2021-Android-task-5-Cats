@@ -4,10 +4,8 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
@@ -20,8 +18,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.toCat
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatDetailsBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar.setToolBarMenu
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar.setToolbarHamburgerButton
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import kotlin.collections.set
 
@@ -48,10 +47,9 @@ class CatDetailsFragment : Fragment() {
         _binding = FragmentCatDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        setListenerForSaveButton()
         prepareSharedElementTransition()
         loadSharedImage(viewModel.lastShowingCat)
-        InitialiseToolbar()
+        setToolbar()
 
         return view
     }
@@ -97,20 +95,6 @@ class CatDetailsFragment : Fragment() {
             .into(view)
     }
 
-    private fun setListenerForSaveButton() {
-        binding.floatingButtonSave.setOnClickListener {
-            activity?.let { activity ->
-//                if (activity !is SaveImageInterface) {
-//                    return@setOnClickListener
-//                }
-//                if (viewModel.checkOnlineState()) {
-//                    val catIndexed = viewModel.lastShowingCat
-//                    //activity.saveImage(catIndexed?.toCat())
-//                }
-            }
-        }
-    }
-
     private fun prepareSharedElementTransition() {
         sharedElementEnterTransition = TransitionInflater.from(context)
             .inflateTransition(R.transition.cat_shared_element_transition)
@@ -128,20 +112,17 @@ class CatDetailsFragment : Fragment() {
         )
     }
 
+    private fun setToolbar() {
+        (activity?.findViewById(R.id.toolbar) as Toolbar).let { toolbar ->
+            toolbar.subtitle = viewModel.lastShowingCat?.imageUrl?.substringAfterLast("/")
+            toolbar.setToolbarHamburgerButton(
+                R.drawable.ic_baseline_arrow_back_24
+            ) { activity?.onBackPressed() }
 
-
-
-    private fun InitialiseToolbar() {
-        //val toolBar = (activity as AppCompatActivity).supportActionBar
-        val toolBar: Toolbar? = activity?.findViewById(R.id.toolbar)
-        toolBar?.let {
-            toolBar.inflateMenu(R.menu.menu_toolbar_details)
-            val menuItem: MenuItem = toolBar.menu.getItem(0) // findViewById(R.id.save_image)
-            menuItem.setOnMenuItemClickListener {
-                val catIndexed = viewModel.lastShowingCat
-                viewModel.startDownload(catIndexed?.toCat())
-                true
-            }
+            toolbar.setToolBarMenu(
+                R.menu.menu_toolbar_details,
+                arrayOf({ viewModel.startDownload(viewModel.lastShowingCat?.toCat()) })
+            )
         }
     }
 
@@ -151,3 +132,4 @@ class CatDetailsFragment : Fragment() {
             CatDetailsFragment()
     }
 }
+

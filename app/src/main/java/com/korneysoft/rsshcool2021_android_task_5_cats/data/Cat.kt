@@ -9,16 +9,16 @@ data class Cat(
     override fun toString(): String {
         return "id=$id"
     }
-}
 
-fun Cat.toCatIndexed(index: Int): CatIndexed {
-    return CatIndexed(
-        index = index,
-        id = this.id,
-        imageUrl = this.imageUrl,
-        width = this.width,
-        height = this.height
-    )
+    fun toCatIndexed(index: Int): CatIndexed {
+        return CatIndexed(
+            index = index,
+            id = this.id,
+            imageUrl = this.imageUrl,
+            width = this.width,
+            height = this.height
+        )
+    }
 }
 
 data class CatIndexed(
@@ -31,13 +31,13 @@ data class CatIndexed(
     override fun toString(): String {
         return "id=$id, index=$index"
     }
-}
 
-fun CatIndexed.toCat(): Cat {
-    return Cat(
-        id = this.id,
-        imageUrl = this.imageUrl,
-        width = this.width,
-        height = this.height
-    )
+    fun toCat(): Cat {
+        return Cat(
+            id = this.id,
+            imageUrl = this.imageUrl,
+            width = this.width,
+            height = this.height
+        )
+    }
 }

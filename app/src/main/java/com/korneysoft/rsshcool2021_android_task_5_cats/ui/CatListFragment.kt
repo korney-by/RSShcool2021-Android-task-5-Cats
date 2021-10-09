@@ -1,29 +1,28 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.transition.TransitionSet
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
-import com.bumptech.glide.Glide
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar.clearExceptTitle
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatListFragmentViewModel
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
-import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "T5-CatListFragment: "
 
@@ -60,6 +59,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         if (savedInstanceState == null) {
             postponeEnterTransition()
         }
+        setToolbar()
         return view
     }
 
@@ -70,7 +70,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
                 onCatListener = this
             ) { getCurrentFragment() }
         } else {
-            staticAdapter?.reinitAdapter(
+            staticAdapter?.resetAdapter(
                 gridSettings.cellSize,
                 onCatListener = this
             ) { getCurrentFragment() }
@@ -140,9 +140,32 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     override fun onCatClick(catIndexed: CatIndexed) {
         Log.d(TAG, "OnClick $catIndexed")
+
         selectedView = getView(catIndexed)
+        runFlipAnimator(catIndexed)
+
         if (selectedView != null) {
             viewModel.setShowingCat(catIndexed)
+        }
+    }
+
+    private fun runFlipAnimator(catIndexed: CatIndexed) {
+        context?.applicationContext?.let {
+            val scale = resources.displayMetrics.density
+
+            val card: View =
+                binding.catListRecyclerView.findViewWithTag(catIndexed.getFlipCardName())
+
+            card.cameraDistance = 4000 * scale
+
+            // Now we will set the front animation
+            val animation = AnimatorInflater.loadAnimator(
+                context?.applicationContext,
+                R.animator.animator_360
+            ) as AnimatorSet
+
+            animation.setTarget(card)
+            animation.start()
         }
     }
 
@@ -151,6 +174,10 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
         @JvmStatic
         fun newInstance() = CatListFragment()
+    }
+
+    private fun setToolbar() {
+        (activity?.findViewById(R.id.toolbar) as Toolbar).clearExceptTitle()
     }
 
     inner class GridSettings {

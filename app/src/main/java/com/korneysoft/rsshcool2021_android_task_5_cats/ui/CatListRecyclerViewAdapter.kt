@@ -17,7 +17,6 @@ import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.toCatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
 
 private const val TAG = "T5 - CatListRVAdapter"
@@ -43,7 +42,7 @@ class CatListRecyclerViewAdapter(
         holder.bind(cat, holderSize)
     }
 
-    fun reinitAdapter(
+    fun resetAdapter(
         holderSize: Int,
         onCatListener: OnCatListener,
         getParentFragment: () -> CatListFragment
@@ -70,6 +69,7 @@ class CatListRecyclerViewAdapter(
         override fun onClick(p0: View?) {
             Log.d(TAG, " Click - $bindingAdapterPosition")
             val catIndexed = getItem(bindingAdapterPosition)?.toCatIndexed(bindingAdapterPosition)
+            itemView.tag = catIndexed?.getFlipCardName()
             catIndexed?.let {
                 onCatListener.onCatClick(catIndexed)
             }
@@ -95,6 +95,7 @@ class CatListRecyclerViewAdapter(
                 }
             }
         }
+
         private fun setViewContentHolder(cat: Cat?) {
             binding.apply {
                 if (cat == null) {
@@ -102,13 +103,13 @@ class CatListRecyclerViewAdapter(
                     binding.textSize.text = null
                 } else {
                     binding.textLoading.visibility = View.INVISIBLE
-                    binding.textSize.text = "№ ${bindingAdapterPosition + 1}"
-//                        getParentFragment().getString(
-//                            R.string.image_info,
-//                            cat.id,
-//                            cat.width,
-//                            cat.height
-//                        )
+                    binding.textSize.text = getParentFragment().getString(
+                        R.string.image_info,
+                        bindingAdapterPosition + 1,
+                        cat.id,
+                        cat.width,
+                        cat.height
+                    )
                 }
             }
         }

@@ -49,8 +49,10 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
     fun getShownCat(): LiveData<CatIndexed?> = showingCat
 
     fun startDownload(cat: Cat?) {
-        cat?.imageUrl?.let { url ->
-            _downloadUrl.value = url
+        if (checkOnlineState()) {
+            cat?.imageUrl?.let { url ->
+                _downloadUrl.value = url
+            }
         }
     }
 

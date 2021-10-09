@@ -17,33 +17,31 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
-import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.interfaces.SaveImageInterface
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
 import android.content.Intent
 
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
-import android.view.Gravity
 
 private const val WRITE_PERMISSION_REQUEST_CODE = 21021
 
-class MainActivity : AppCompatActivity(), SaveImageInterface {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: CatViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // TODO("NIGHT Theme")
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         registerObserverStateOnline()
         registerObserverShowingDetailsCat()
+        registerObserverDownloadUrl()
         registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         if (savedInstanceState == null) {
@@ -69,6 +67,14 @@ class MainActivity : AppCompatActivity(), SaveImageInterface {
                     closeOfflineFragment()
                 }
             })
+    }
+
+    private fun registerObserverDownloadUrl() {
+        viewModel.downloadUrl.observe(this,
+            {
+                it?.let { saveImage(it) }
+            }
+        )
     }
 
     private fun isFragmentVisible(tag: String): Boolean {
@@ -191,13 +197,13 @@ class MainActivity : AppCompatActivity(), SaveImageInterface {
         dm.query(DownloadManager.Query().setFilterById(downloadId))?.use { cursor ->
             if (cursor.moveToFirst()) {
                 val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-                var message=""
+                var message = ""
                 if (status == DownloadManager.STATUS_SUCCESSFUL) {
                     message = getString(R.string.download_successfull, fileName)
                 } else if (status == DownloadManager.STATUS_FAILED) {
                     message = getString(R.string.download_failed, fileName)
                 }
-                if (message.length>0) {
+                if (message.length > 0) {
                     downloadFiles.remove(downloadId)
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
@@ -205,28 +211,27 @@ class MainActivity : AppCompatActivity(), SaveImageInterface {
         }
     }
 
-    override fun saveImage(cat: Cat?) {
+    private fun saveImage(url: String) {
         if (!getSavePermission()) return
 
-        cat?.imageUrl?.let { url ->
-            val filename = url.substringAfterLast("/")
-            val request = DownloadManager.Request(Uri.parse(url))
-                .setTitle(filename)
-                .setDescription("Download: $filename")
-                .setNotificationVisibility(
-                    DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
-                )
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+        val filename = url.substringAfterLast("/")
+        val request = DownloadManager.Request(Uri.parse(url))
+            .setTitle(filename)
+            .setDescription("Download: $filename")
+            .setNotificationVisibility(
+                DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+            )
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                @Suppress("DEPRECATION")
-                request.allowScanningByMediaScanner()
-            }
-
-            val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val downloadId = manager.enqueue(request)
-            downloadFiles.put(downloadId, filename)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            @Suppress("DEPRECATION")
+            request.allowScanningByMediaScanner()
         }
+
+        val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadId = manager.enqueue(request)
+        downloadFiles.put(downloadId, filename)
+
     }
 
     companion object {

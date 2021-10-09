@@ -30,6 +30,9 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
     val _isOnline = MutableLiveData<Boolean>(true)
     val isOnline: LiveData<Boolean> get() = _isOnline
 
+    val _downloadUrl = MutableLiveData<String?>(null)
+    val downloadUrl: LiveData<String?> get() = _downloadUrl
+
     init {
         Repository.initialize()
         _showingCat.value = null
@@ -44,6 +47,12 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getShownCat(): LiveData<CatIndexed?> = showingCat
+
+    fun startDownload(cat: Cat?) {
+        cat?.imageUrl?.let { url ->
+            _downloadUrl.value = url
+        }
+    }
 
     fun checkOnlineState(): Boolean {
         val isOnlineValue = isInternetAvailable(context)

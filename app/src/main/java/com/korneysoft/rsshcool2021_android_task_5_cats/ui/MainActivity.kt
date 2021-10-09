@@ -1,6 +1,7 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.PackageManager
@@ -12,7 +13,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
@@ -22,10 +22,15 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
 import com.korneysoft.rsshcool2021_android_task_5_cats.interfaces.SaveImageInterface
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
+import android.content.Intent
+
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
+import android.view.Gravity
 
 private const val WRITE_PERMISSION_REQUEST_CODE = 21021
 
-class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterface {
+class MainActivity : AppCompatActivity(), SaveImageInterface {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: CatViewModel by viewModels()
 
@@ -39,6 +44,8 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
 
         registerObserverStateOnline()
         registerObserverShowingDetailsCat()
+        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+
         if (savedInstanceState == null) {
             loadCatListFragment()
         }
@@ -121,10 +128,6 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
         }
     }
 
-    override fun setNavigationBarColor() {
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.primaryColor)
-    }
-
     private fun getSavePermission(): Boolean {
         // return true if permission granted successfully
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -172,6 +175,36 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
         }
     }
 
+    private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (downloadFiles.containsKey(id)) {
+                validDownload(this@MainActivity, id)
+            }
+        }
+    }
+
+    @SuppressLint("Range")
+    private fun validDownload(context: Context, downloadId: Long) {
+        val dm = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        val fileName = downloadFiles.get(downloadId)
+        dm.query(DownloadManager.Query().setFilterById(downloadId))?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                var message=""
+                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                    message = getString(R.string.download_successfull, fileName)
+                } else if (status == DownloadManager.STATUS_FAILED) {
+                    message = getString(R.string.download_failed, fileName)
+                }
+                if (message.length>0) {
+                    downloadFiles.remove(downloadId)
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     override fun saveImage(cat: Cat?) {
         if (!getSavePermission()) return
 
@@ -191,14 +224,14 @@ class MainActivity : AppCompatActivity(), SetNavigationBarColor, SaveImageInterf
             }
 
             val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            manager.enqueue(request)
+            val downloadId = manager.enqueue(request)
+            downloadFiles.put(downloadId, filename)
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        // supportFragmentManager.popBackStack()
-
+    companion object {
+        val downloadFiles = mutableMapOf<Long, String>()
     }
+
 
 }

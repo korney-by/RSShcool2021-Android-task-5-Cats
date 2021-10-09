@@ -1,4 +1,4 @@
-package com.korneysoft.rsshcool2021_android_task_5_cats.internet_utils
+package com.korneysoft.rsshcool2021_android_task_5_cats.internet
 
 import android.content.Context
 import android.net.ConnectivityManager

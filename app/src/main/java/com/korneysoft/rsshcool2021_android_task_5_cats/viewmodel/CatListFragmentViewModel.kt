@@ -1,6 +1,5 @@
 package com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.korneysoft.rsshcool2021_android_task_5_cats.ui.CatListRecyclerViewAdapter
@@ -31,5 +30,4 @@ class CatListFragmentViewModel() : ViewModel() {
             }
         }
     }
-
 }

@@ -12,8 +12,7 @@ import androidx.paging.cachedIn
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Repository
-import com.korneysoft.rsshcool2021_android_task_5_cats.internet_utils.isInternetAvailable
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.CatListFragment
+import com.korneysoft.rsshcool2021_android_task_5_cats.internet.isInternetAvailable
 import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "T5-CatViewModel"

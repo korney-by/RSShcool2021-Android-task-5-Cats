@@ -7,5 +7,7 @@
     <string name="try_again">Try again</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="image_info">id: %1$s    %2$dx%3$d</string>
+    <string name="download_successfull">Файл %1$s сохранен в папку  Загрузки</string>
+    <string name="download_failed">Download failed. File %1$s not downloaded.</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

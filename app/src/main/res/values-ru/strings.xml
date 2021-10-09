@@ -7,4 +7,6 @@
     <string name="connection_off">Нет связи с сервером</string>
     <string name="try_again">попробовать снова</string>
     <string name="image_info">id: %1$s    %2$dx%3$d</string>
+    <string name="download_successfull">Файл %1$s сохранен в папку  Загрузки</string>
+    <string name="download_failed">Ошибка загрузки. Файл %1$s не сохранен.</string>
 </resources>

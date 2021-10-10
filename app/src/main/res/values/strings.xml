@@ -6,8 +6,9 @@
     <string name="connection_off">No connection to the server</string>
     <string name="try_again">Try again</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="image_info">#%1$d. id:%2$s  -  %3$dx%4$d</string>
+    <string name="image_info">"#%1$d   %2$dx%3$d"</string>
     <string name="download_successfull">Файл %1$s сохранен в папку  Загрузки</string>
     <string name="download_failed">Download failed. File %1$s not downloaded.</string>
+    <string name="image_details_info">"File: %1$s   %2$dx%3$d"</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

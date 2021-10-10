@@ -9,13 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentOfflineBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar.clearExceptTitle
-import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.clearExceptTitle
+import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.MainViewModel
 
 class OfflineFragment : Fragment() {
     private var _binding: FragmentOfflineBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: CatViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

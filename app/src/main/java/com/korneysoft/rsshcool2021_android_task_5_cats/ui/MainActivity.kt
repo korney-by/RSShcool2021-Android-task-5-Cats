@@ -3,7 +3,10 @@ package com.korneysoft.rsshcool2021_android_task_5_cats.ui
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -19,17 +22,13 @@ import androidx.lifecycle.Observer
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ActivityMainBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
-import android.content.Intent
-
-import android.content.BroadcastReceiver
-import android.content.IntentFilter
+import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.MainViewModel
 
 private const val WRITE_PERMISSION_REQUEST_CODE = 21021
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: CatViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isFragmentVisible(tag: String): Boolean {
         val fragment = supportFragmentManager.findFragmentByTag(tag)
-        return (fragment != null && fragment.isVisible())
+        return (fragment != null && fragment.isVisible)
     }
 
     private fun loadCatListFragment() {
@@ -108,6 +107,11 @@ class MainActivity : AppCompatActivity() {
             OfflineFragment::class.java.simpleName,
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
+//        supportFragmentManager.popBackStack(
+//            CatListFragment::class.java.simpleName,
+//            FragmentManager.POP_BACK_STACK_INCLUSIVE
+//        )
+//        loadCatListFragment()
     }
 
     private fun loadCatDetailsFragment(catIndexed: CatIndexed) {
@@ -130,24 +134,19 @@ class MainActivity : AppCompatActivity() {
                 )
                 .addToBackStack(CatDetailsFragment::class.java.simpleName)
                 .commit()
-
         }
     }
 
     private fun getSavePermission(): Boolean {
         // return true if permission granted successfully
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(
-                    WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
+            return if (
+                checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
             ) {
-                return true
+                true
             } else {
-                requestPermissions(
-                    arrayOf(WRITE_EXTERNAL_STORAGE),
-                    WRITE_PERMISSION_REQUEST_CODE
-                )
-                return false
+                requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE), WRITE_PERMISSION_REQUEST_CODE)
+                false
             }
         }
         return true
@@ -203,7 +202,7 @@ class MainActivity : AppCompatActivity() {
                 } else if (status == DownloadManager.STATUS_FAILED) {
                     message = getString(R.string.download_failed, fileName)
                 }
-                if (message.length > 0) {
+                if (message.isNotEmpty()) {
                     downloadFiles.remove(downloadId)
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
@@ -230,13 +229,18 @@ class MainActivity : AppCompatActivity() {
 
         val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadId = manager.enqueue(request)
-        downloadFiles.put(downloadId, filename)
+        downloadFiles[downloadId] = filename
+    }
 
+    override fun onBackPressed() {
+        if (isFragmentVisible(OfflineFragment::class.java.simpleName)) {
+            finish()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     companion object {
         val downloadFiles = mutableMapOf<Long, String>()
     }
-
-
 }

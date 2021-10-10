@@ -18,6 +18,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.ViewCatBinding
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.getFlipCardName
 
 private const val TAG = "T5 - CatListRVAdapter"
 
@@ -106,7 +107,6 @@ class CatListRecyclerViewAdapter(
                     binding.textSize.text = getParentFragment().getString(
                         R.string.image_info,
                         bindingAdapterPosition + 1,
-                        cat.id,
                         cat.width,
                         cat.height
                     )

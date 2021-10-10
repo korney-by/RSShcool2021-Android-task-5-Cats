@@ -6,7 +6,8 @@
     <string name="permission_write_granted">Разрешение на запись предоставлено. Теперь вы можете сохранять картинки</string>
     <string name="connection_off">Нет связи с сервером</string>
     <string name="try_again">попробовать снова</string>
-    <string name="image_info">№%1$d. id:%2$s  -  %3$dx%4$d</string>
+    <string name="image_info">"№%1$d   %2$dx%3$d"</string>
     <string name="download_successfull">Файл %1$s сохранен в папку  Загрузки</string>
     <string name="download_failed">Ошибка загрузки. Файл %1$s не сохранен.</string>
+    <string name="image_details_info">"Файл: %1$s   %2$dx%3$d"</string>
 </resources>

@@ -20,7 +20,7 @@ interface TheCatApiService {
     ): Response<List<CatDto>>
 
     companion object {
-        const val DEFAULT_PAGE_SIZE = 24
+        const val DEFAULT_PAGE_SIZE = 29
     }
 }
 

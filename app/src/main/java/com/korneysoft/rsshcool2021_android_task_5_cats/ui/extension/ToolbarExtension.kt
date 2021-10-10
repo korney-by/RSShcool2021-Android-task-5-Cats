@@ -1,4 +1,4 @@
-package com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar
+package com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension
 
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
@@ -15,7 +15,7 @@ fun Toolbar.setToolbarHamburgerButton(iconResource: Int, action: () -> Unit) {
 
 fun Toolbar.setToolBarMenu(
     menuResource: Int,
-    actions: Array<() -> Unit>,
+    actions: Array<() -> Unit>
 ) {
     menu.clear()
     if (menuResource != 0) {
@@ -29,7 +29,6 @@ fun Toolbar.setToolBarMenu(
             }
         }
     }
-
 }
 
 fun Toolbar.clearExceptTitle() {
@@ -43,5 +42,5 @@ fun Toolbar.clearMenu() {
 }
 
 fun Toolbar.clearHamburgerButton() {
-    setToolbarHamburgerButton(0, {})
+    setToolbarHamburgerButton(0) {}
 }

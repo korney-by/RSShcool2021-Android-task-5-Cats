@@ -20,9 +20,10 @@ import androidx.transition.TransitionInflater
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatListBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar.clearExceptTitle
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.clearExceptTitle
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.getFlipCardName
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatListFragmentViewModel
-import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
+import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.MainViewModel
 
 private const val TAG = "T5-CatListFragment: "
 
@@ -31,7 +32,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     private var _binding: FragmentCatListBinding? = null
     private val binding get() = _binding!!
     private val gridSettings by lazy { GridSettings() }
-    private val viewModel: CatViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private val viewModelFragment: CatListFragmentViewModel by viewModels()
     private var layoutManager: GridLayoutManager? = null
     private var selectedView: View? = null

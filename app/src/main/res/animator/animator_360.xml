@@ -4,14 +4,13 @@
         android:valueFrom="0"
         android:valueTo="180"
         android:propertyName="rotationY"
-        android:duration="150"
+        android:duration="200"
         />
 
     <objectAnimator
         android:valueFrom="180"
         android:valueTo="0"
         android:propertyName="rotationY"
-        android:duration="350"
+        android:duration="300"
         />
-
 </set>

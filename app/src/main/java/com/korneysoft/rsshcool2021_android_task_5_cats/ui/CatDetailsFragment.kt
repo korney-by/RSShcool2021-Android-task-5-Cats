@@ -19,9 +19,10 @@ import com.bumptech.glide.request.target.Target
 import com.korneysoft.rsshcool2021_android_task_5_cats.R
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.CatIndexed
 import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentCatDetailsBinding
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar.setToolBarMenu
-import com.korneysoft.rsshcool2021_android_task_5_cats.ui.toolbar.setToolbarHamburgerButton
-import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.CatViewModel
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.getFilename
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.setToolBarMenu
+import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.setToolbarHamburgerButton
+import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.MainViewModel
 import kotlin.collections.set
 
 private const val TAG = "T5-CatDetailsFragment"
@@ -30,7 +31,7 @@ class CatDetailsFragment : Fragment() {
 
     private var _binding: FragmentCatDetailsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: CatViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,15 +115,24 @@ class CatDetailsFragment : Fragment() {
 
     private fun setToolbar() {
         (activity?.findViewById(R.id.toolbar) as Toolbar).let { toolbar ->
-            toolbar.subtitle = viewModel.lastShowingCat?.imageUrl?.substringAfterLast("/")
-            toolbar.setToolbarHamburgerButton(
-                R.drawable.ic_baseline_arrow_back_24
-            ) { activity?.onBackPressed() }
+            val catIndexed = viewModel.lastShowingCat
+            catIndexed?.let {
+                val filename = catIndexed.getFilename()
+                toolbar.subtitle = getString(
+                    R.string.image_details_info,
+                    filename,
+                    catIndexed.width,
+                    catIndexed.height
+                )
+                toolbar.setToolbarHamburgerButton(
+                    R.drawable.ic_baseline_arrow_back_24
+                ) { activity?.onBackPressed() }
 
-            toolbar.setToolBarMenu(
-                R.menu.menu_toolbar_details,
-                arrayOf({ viewModel.startDownload(viewModel.lastShowingCat?.toCat()) })
-            )
+                toolbar.setToolBarMenu(
+                    R.menu.menu_toolbar_details,
+                    arrayOf({ viewModel.startDownload(catIndexed.toCat()) })
+                )
+            }
         }
     }
 
@@ -132,4 +142,3 @@ class CatDetailsFragment : Fragment() {
             CatDetailsFragment()
     }
 }
-

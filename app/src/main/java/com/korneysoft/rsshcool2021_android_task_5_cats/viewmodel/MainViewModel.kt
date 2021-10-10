@@ -15,22 +15,20 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.Repository
 import com.korneysoft.rsshcool2021_android_task_5_cats.internet.isInternetAvailable
 import kotlinx.coroutines.flow.Flow
 
-private const val TAG = "T5-CatViewModel"
-
-class CatViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
     private val context: Context = application.applicationContext
     private val repository by lazy { Repository.get() }
 
     private val _showingCat = MutableLiveData<CatIndexed?>()
-    val showingCat: LiveData<CatIndexed?> get() = _showingCat
+    private val showingCat: LiveData<CatIndexed?> get() = _showingCat
     var lastShowingCat: CatIndexed? = null
 
-    val _isOnline = MutableLiveData<Boolean>(true)
+    private val _isOnline = MutableLiveData(true)
     val isOnline: LiveData<Boolean> get() = _isOnline
 
-    val _downloadUrl = MutableLiveData<String?>(null)
+    private val _downloadUrl = MutableLiveData<String?>(null)
     val downloadUrl: LiveData<String?> get() = _downloadUrl
 
     init {
@@ -58,7 +56,9 @@ class CatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun checkOnlineState(): Boolean {
         val isOnlineValue = isInternetAvailable(context)
-        _isOnline.value = isOnlineValue
+        if (_isOnline.value != isOnlineValue) {
+            _isOnline.value = isOnlineValue
+        }
         return isOnlineValue
     }
 }

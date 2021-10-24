@@ -4,6 +4,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import kotlin.math.min
 
+//TODO hamburger?
 fun Toolbar.setToolbarHamburgerButton(iconResource: Int, action: () -> Unit) {
     if (iconResource == 0) {
         navigationIcon = null
@@ -31,6 +32,7 @@ fun Toolbar.setToolBarMenu(
     }
 }
 
+//TODO Naming
 fun Toolbar.clearExceptTitle() {
     subtitle = ""
     clearHamburgerButton()

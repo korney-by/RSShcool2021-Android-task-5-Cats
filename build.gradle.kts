@@ -34,6 +34,7 @@ detekt {
     toolVersion = "1.18.1"
     config = files("config/detekt/detekt.yml")
     buildUponDefaultConfig = true
+    //TODO убрать deprecated properties
     failFast = true
 
     input = files("app/src/main/java", "app/src/main/kotlin")

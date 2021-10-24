@@ -4,6 +4,8 @@ plugins {
     kotlin("kapt")
 }
 
+
+//TODO удалить build.gradle.bak build.gradle.work
 android {
     compileSdk = 31
 
@@ -43,7 +45,7 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
+//TODO использовать только stable версии, вынести в переменные версии либ, которые можно переиспользовать
     val kotlinVersion = "1.5.31"
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")

@@ -27,10 +27,11 @@ import kotlin.collections.set
 
 private const val TAG = "T5-CatDetailsFragment"
 
+//TODO комментарии
 class CatDetailsFragment : Fragment() {
 
     private var _binding: FragmentCatDetailsBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding!! //TODO краш прилы - проверка на null
     private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +62,7 @@ class CatDetailsFragment : Fragment() {
     }
 
     private fun loadSharedImage(shownCat: CatIndexed?) {
+        //Todo инкапсуляция, излишние properties
         val view = binding.imageViewDetails
         shownCat ?: run {
             startPostponedEnterTransition()
@@ -71,6 +73,7 @@ class CatDetailsFragment : Fragment() {
         Glide
             .with(view.context)
             .load(shownCat.imageUrl)
+            //TODO Inner class
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

@@ -22,6 +22,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.getFlipCardN
 
 private const val TAG = "T5 - CatListRVAdapter"
 
+//TODO в рамках адаптера использование активностей, фрагментов и других view в параметрах не требуется, контекст можно получить из parent
 class CatListRecyclerViewAdapter(
     private var holderSize: Int,
     private var onCatListener: OnCatListener,
@@ -43,6 +44,7 @@ class CatListRecyclerViewAdapter(
         holder.bind(cat, holderSize)
     }
 
+    //TODO не понято как и зачем использовать
     fun resetAdapter(
         holderSize: Int,
         onCatListener: OnCatListener,
@@ -66,7 +68,7 @@ class CatListRecyclerViewAdapter(
         init {
             itemView.setOnClickListener(this)
         }
-
+        //TODO Holder не должен имплементировать OnClick
         override fun onClick(p0: View?) {
             Log.d(TAG, " Click - $bindingAdapterPosition")
             val catIndexed = getItem(bindingAdapterPosition)?.toCatIndexed(bindingAdapterPosition)
@@ -78,7 +80,9 @@ class CatListRecyclerViewAdapter(
 
         fun bind(cat: Cat?, holderSize: Int) {
             setSizeImageView(binding.imageView, holderSize)
+            //TODO Naming
             setTagContentHolder(cat)
+                //TODO Naming
             setViewContentHolder(null)
             cat?.let {
                 loadImage(it)
@@ -122,6 +126,7 @@ class CatListRecyclerViewAdapter(
                 .load(cat.imageUrl)
                 .centerCrop()
                 .error(R.drawable.ic_baseline_close_24)
+                    //TODO inner class
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -159,6 +164,7 @@ class CatListRecyclerViewAdapter(
     }
 
     companion object {
+        //TODO Naming, inner class, companion не требуется
         private val itemComparator = object : DiffUtil.ItemCallback<Cat>() {
 
             override fun areItemsTheSame(oldItem: Cat, newItem: Cat): Boolean {

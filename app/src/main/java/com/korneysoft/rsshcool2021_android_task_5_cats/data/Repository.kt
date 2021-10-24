@@ -6,6 +6,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.CatPagingSo
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TheCatApiImpl
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TheCatApiService
 
+//TODO слишком абстрактное название
 class Repository : RepositoryInterface {
     private val service: TheCatApiService = TheCatApiImpl.service
 
@@ -22,6 +23,7 @@ class Repository : RepositoryInterface {
         private var INSTANCE: Repository? = null
         private var PAGE_SIZE = 24
 
+        //TODO Object - Singleton
         fun initialize() {
             if (INSTANCE == null) {
                 INSTANCE = Repository()

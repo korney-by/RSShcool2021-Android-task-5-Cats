@@ -17,6 +17,9 @@
         tools:srcCompat="@tools:sample/avatars"
         tools:ignore="MissingConstraints" />
 
+
+    <!--TODO Хардкод - Вынести в ресурсы -->
+
     <View
         android:id="@+id/view"
         android:layout_width="0dp"
@@ -51,6 +54,7 @@
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
+    <!--TODO Убрать -->
 
     <!--    <TextView-->
 <!--        android:id="@+id/content"-->

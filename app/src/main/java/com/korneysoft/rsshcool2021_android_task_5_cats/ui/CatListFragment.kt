@@ -30,7 +30,7 @@ private const val TAG = "T5-CatListFragment: "
 class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     private var _binding: FragmentCatListBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding!! //TODO краш прилы - проверка на null
     private val gridSettings by lazy { GridSettings() }
     private val viewModel: MainViewModel by activityViewModels()
     private val viewModelFragment: CatListFragmentViewModel by viewModels()
@@ -64,6 +64,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         return view
     }
 
+    //TODO слишком сложный процесс инициализации адаптера, упростить. не понято как и зачем использовать
     private fun initialiseAdapter() {
         if (staticAdapter == null) {
             staticAdapter = CatListRecyclerViewAdapter(
@@ -120,6 +121,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
 
     private fun getCurrentFragment() = this
 
+    //TODO Не читаемый код
     private fun scrollToPositionCurrentCat() {
         val catIndexed = viewModel.lastShowingCat ?: return
         val layoutManager = binding.catListRecyclerView.layoutManager ?: return
@@ -139,6 +141,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         viewModel.checkOnlineState()
     }
 
+    //TODO листенер адаптера, должен оставаться в адаптере, либо создаваться отдельно
     override fun onCatClick(catIndexed: CatIndexed) {
         Log.d(TAG, "OnClick $catIndexed")
 
@@ -150,6 +153,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         }
     }
 
+    //TODO анимаци работает не верно
     private fun runFlipAnimator(catIndexed: CatIndexed) {
         context?.applicationContext?.let {
             val scale = resources.displayMetrics.density
@@ -157,6 +161,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
             val card: View =
                 binding.catListRecyclerView.findViewWithTag(catIndexed.getFlipCardName())
 
+            //TODO Magic Number
             card.cameraDistance = 4000 * scale
 
             // Now we will set the front animation
@@ -171,6 +176,7 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
     }
 
     companion object {
+        //TODO зачем?
         private var staticAdapter: CatListRecyclerViewAdapter? = null
 
         @JvmStatic
@@ -191,12 +197,15 @@ class CatListFragment : Fragment(), CatListRecyclerViewAdapter.OnCatListener {
         init {
             val width: Int
             val height: Int
+            //TODO сомнительная конструкция с activity, должно быть проще
             activity?.let { activity ->
+                //TODO требуется инкапсулирование граничных условий, нагруженный код
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     width = activity.windowManager.currentWindowMetrics.bounds.width()
                     height = activity.windowManager.currentWindowMetrics.bounds.height()
                 } else {
                     val displayMetrics = DisplayMetrics()
+                        //TODO убрать все deprecated properties
                     @Suppress("DEPRECATION")
                     activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
                     width = displayMetrics.widthPixels

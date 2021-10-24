@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.Flow
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
+
+    //TODO утечка памяти, ViewModel не должна хранить в себе контекст
     private val context: Context = application.applicationContext
     private val repository by lazy { Repository.get() }
 

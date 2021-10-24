@@ -9,7 +9,7 @@ data class Cat(
     override fun toString(): String {
         return "id=$id"
     }
-
+//TODO сложная логика использования, замена алгоритма на более простой
     fun toCatIndexed(index: Int): CatIndexed {
         return CatIndexed(
             index = index,
@@ -21,6 +21,7 @@ data class Cat(
     }
 }
 
+//TODO сложная логика использования, замена алгоритма на более простой
 data class CatIndexed(
     val index: Int,
     val id: String,

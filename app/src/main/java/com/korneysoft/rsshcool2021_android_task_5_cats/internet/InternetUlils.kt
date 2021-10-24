@@ -10,6 +10,7 @@ fun isInternetAvailable(context: Context): Boolean {
     val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
+    //TODO требуется инкапсулирование граничных условий, нагруженный код
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         val networkCapabilities = connectivityManager.activeNetwork ?: return false
         val actNw =

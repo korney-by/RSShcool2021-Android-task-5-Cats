@@ -6,6 +6,9 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundLoadAnimation">
 
+
+    <!--TODO Хардкод - Вынести в ресурсы -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cat_list_recycler_view"
         android:name="com.korneysoft.rsshcool2021_android_task_5_cats.CatListFragment"

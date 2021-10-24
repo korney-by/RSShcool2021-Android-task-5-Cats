@@ -4,6 +4,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.Cat
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+//TODO нету смысла в использовании DTO
 @JsonClass(generateAdapter = true)
 data class CatDto(
     @Json(name = "id") val id: String,

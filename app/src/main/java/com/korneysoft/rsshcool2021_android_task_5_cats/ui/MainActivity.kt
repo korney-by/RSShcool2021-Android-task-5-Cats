@@ -26,6 +26,10 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.MainViewModel
 
 private const val WRITE_PERMISSION_REQUEST_CODE = 21021
 
+//TODO не читаемый код, не требуется наблюдать стейты для уже открытого фрагмента, если мы не может закрыть его, слишком сложная логика.
+
+
+//TODO наименования пакетов не соответствуют их сути, лучше разделять по назначению details, list etc.
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
@@ -36,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        //TODO можно заблокировать проще
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         registerObserverStateOnline()
@@ -81,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         return (fragment != null && fragment.isVisible)
     }
 
+    //TODO копипаст реплейса фрагмента
     private fun loadCatListFragment() {
         if (isFragmentVisible(CatListFragment::class.java.simpleName)) return
         val fragment: Fragment =
@@ -159,6 +165,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
+            //TODO инкапсулировать вывод сообщений, определение результата
             WRITE_PERMISSION_REQUEST_CODE -> {
                 if ((grantResults.isNotEmpty() &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -180,6 +187,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //TODO Inner class
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -190,6 +198,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("Range")
+    //TODO Lint не просто так предупреждает -> when, слишком сложная логика, требуется делегировать
     private fun validDownload(context: Context, downloadId: Long) {
         val dm = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         val fileName = downloadFiles.get(downloadId)
@@ -223,6 +232,7 @@ class MainActivity : AppCompatActivity() {
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            //TODO убрать deprecated fun
             @Suppress("DEPRECATION")
             request.allowScanningByMediaScanner()
         }

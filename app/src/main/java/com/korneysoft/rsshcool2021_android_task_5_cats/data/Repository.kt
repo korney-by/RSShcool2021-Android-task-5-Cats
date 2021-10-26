@@ -6,10 +6,11 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.CatPagingSo
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TheCatApiImpl
 import com.korneysoft.rsshcool2021_android_task_5_cats.data.retrofit.TheCatApiService
 
-//TODO слишком абстрактное название
+//TODO Naming (CatRepository:Repository(),CatApi) - слишком абстрактное название, передавать service в качестве параметра
 class Repository : RepositoryInterface {
     private val service: TheCatApiService = TheCatApiImpl.service
 
+        //TODO смысл отдельной переменной?, можно сразу вернуть pager
     private val pager: Pager<Int, Cat> by lazy { initDataPager() }
     override fun getDataPager(): Pager<Int, Cat> = pager
 

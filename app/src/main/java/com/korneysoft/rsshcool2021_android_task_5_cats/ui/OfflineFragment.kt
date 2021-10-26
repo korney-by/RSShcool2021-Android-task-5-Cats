@@ -12,6 +12,7 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.databinding.FragmentOffli
 import com.korneysoft.rsshcool2021_android_task_5_cats.ui.extension.clearExceptTitle
 import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.MainViewModel
 
+//TODO излишняя логика, подкидывать фрагмент возможно, но лучше взаимодействовать с одним, меняя стейты компонентов (ошибки, placeholder списка, например ripple и т.д.)
 class OfflineFragment : Fragment() {
     private var _binding: FragmentOfflineBinding? = null
     private val binding get() = _binding!!

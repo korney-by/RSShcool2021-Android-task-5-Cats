@@ -19,12 +19,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
 
-    //TODO утечка памяти, ViewModel не должна хранить в себе контекст
+    //TODO возможная утечка памяти, ViewModel не должна хранить в себе контекст
     private val context: Context = application.applicationContext
+
+    //TODO должен передоваться как параметр при создании ViewModel (требуется ViewModelFactory либо DI)
     private val repository by lazy { Repository.get() }
 
     private val _showingCat = MutableLiveData<CatIndexed?>()
     private val showingCat: LiveData<CatIndexed?> get() = _showingCat
+
+    //TODO лучше избигать nullability, текущая логика с CatIndexed и Cat слишком сложная, возможна реализация без CatIndexed
     var lastShowingCat: CatIndexed? = null
 
     private val _isOnline = MutableLiveData(true)
@@ -48,6 +52,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getShownCat(): LiveData<CatIndexed?> = showingCat
 
+    //TODO прокидывается из активности cat, приходит сюда, чтобы вернуться обратно в активность через liveData- слишком сложная логика, запутывает код
     fun startDownload(cat: Cat?) {
         if (checkOnlineState()) {
             cat?.imageUrl?.let { url ->

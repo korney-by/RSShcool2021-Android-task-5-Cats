@@ -68,6 +68,7 @@ class CatListRecyclerViewAdapter(
         init {
             itemView.setOnClickListener(this)
         }
+
         //TODO Holder не должен имплементировать OnClick
         override fun onClick(p0: View?) {
             Log.d(TAG, " Click - $bindingAdapterPosition")
@@ -82,7 +83,7 @@ class CatListRecyclerViewAdapter(
             setSizeImageView(binding.imageView, holderSize)
             //TODO Naming
             setTagContentHolder(cat)
-                //TODO Naming
+            //TODO Naming
             setViewContentHolder(null)
             cat?.let {
                 loadImage(it)
@@ -118,6 +119,7 @@ class CatListRecyclerViewAdapter(
             }
         }
 
+        //TODO методы должны быть универсальными, явная привязка к binding и parentFragment, которого тут быть не должно
         private fun loadImage(cat: Cat) {
             val parentFragment = getParentFragment()
             cat.imageUrl ?: return
@@ -126,7 +128,7 @@ class CatListRecyclerViewAdapter(
                 .load(cat.imageUrl)
                 .centerCrop()
                 .error(R.drawable.ic_baseline_close_24)
-                    //TODO inner class
+                //TODO inner class
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -155,6 +157,7 @@ class CatListRecyclerViewAdapter(
                 .into(imageView)
         }
 
+        //TODO Naming - не информативно, именование метода скрывает его истинное назначение
         private fun setSizeImageView(imageView: ImageView, size: Int) {
             imageView.minimumWidth = size
             imageView.maxWidth = size

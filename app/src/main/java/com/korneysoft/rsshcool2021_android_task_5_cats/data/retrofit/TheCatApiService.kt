@@ -11,7 +11,7 @@ import retrofit2.http.Query
 private const val API_KEY = "b26ab8aa-7ee7-408e-b653-93164171b8a7"
 private const val BASE_URL = "https://api.thecatapi.com"
 
-//TODO Делегирование API и Client
+//TODO Делегирование API и Client, Naming - CatApi
 interface TheCatApiService {
     @Headers("x-api-key:$API_KEY")
     @GET("/v1/images/search")
@@ -23,6 +23,7 @@ interface TheCatApiService {
     ): Response<List<CatDto>>
 
     companion object {
+        //TODO magicNumber используется тут и в репозитории, следует создать отдельный конфиг и вызывать его
         const val DEFAULT_PAGE_SIZE = 29
     }
 }

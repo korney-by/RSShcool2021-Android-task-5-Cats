@@ -26,10 +26,18 @@ import com.korneysoft.rsshcool2021_android_task_5_cats.viewmodel.MainViewModel
 
 private const val WRITE_PERMISSION_REQUEST_CODE = 21021
 
-//TODO не читаемый код, не требуется наблюдать стейты для уже открытого фрагмента, если мы не может закрыть его, слишком сложная логика.
+//TODO не читаемый код, слишком сложная логика, не требуется наблюдать стейты для уже открытого фрагмента
+// копипаста при создании фрагмента и попытке его реплейса.
 
 
-//TODO наименования пакетов не соответствуют их сути, лучше разделять по назначению details, list etc.
+//TODO наименования пакетов слишком абстрактные, нету разделения по логике, но при этом есть разделение по типу, лучше разделять по назначению details, list etc.
+// Пример: package details -> { CatDetailsFragment,CatDetailsViewModel, etc.}
+// }
+//   package list -> {CatListFragment,
+//   CatListViewModel, CatListAdapter,
+//   }
+// MainActivity при этом лучше оставить в корне ui (т.к. это точка входа в приложение и она инициализируется единожды)
+//
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
@@ -40,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        //TODO можно заблокировать проще
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         registerObserverStateOnline()
@@ -145,6 +152,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun getSavePermission(): Boolean {
         // return true if permission granted successfully
+        //TODO если версия кода меньше чем М и будет вызвана данная функция, разрешения на сохранения не будут получены
+        // приложение скрашится
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return if (
                 checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
@@ -219,6 +228,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //TODO делегировать всю логику работы с изображением, view не ответственна за это
     private fun saveImage(url: String) {
         if (!getSavePermission()) return
 

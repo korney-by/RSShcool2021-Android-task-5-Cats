@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 
+//TODO Naming класса, метода
 fun isInternetAvailable(context: Context): Boolean {
     var result = false
     val connectivityManager =
@@ -23,6 +24,7 @@ fun isInternetAvailable(context: Context): Boolean {
         }
     } else {
         connectivityManager.run {
+            //TODO Избавиться от deprecated методов/классов
             @Suppress("DEPRECATION")
             connectivityManager.activeNetworkInfo?.run {
                 result = when (type) {

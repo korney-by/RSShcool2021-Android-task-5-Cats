@@ -21,10 +21,12 @@ class CatPagingSource(private val apiService: TheCatApiService, private val page
 
             if (response.isSuccessful) {
                 val cats = response.body()?.map { it.toCat() } ?: emptyList()
+                    //TODO magicnumber
                 val nextPage = if (cats.size < pageSize) null else pageNumber + 1
                 val prevPage = if (pageNumber == 1) null else pageNumber - 1
                 LoadResult.Page(cats, prevPage, nextPage)
             } else {
+                //TODO что если случилась ошибка загрузки, при уже загруженном количестве данных? Все почистить и вписать null - не выход
                 LoadResult.Page(emptyList(), prevKey = null, nextKey = null)
             }
         } catch (e: HttpException) {

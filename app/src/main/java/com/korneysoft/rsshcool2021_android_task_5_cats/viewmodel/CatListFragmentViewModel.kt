@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-//TODO не требуется разделять по типу вьюмодели от места их использования, усложняет поиск компонентов, которые взаимодействуют между собой
+//TODO Naming, не требуется разделять по типу вьюмодели от места их использования, усложняет поиск компонентов, которые взаимодействуют между собой
 class CatListFragmentViewModel : ViewModel() {
 
     private var _isInitialised = false

@@ -5,6 +5,8 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 //TODO нету смысла в использовании DTO
+// Именование пакета вводит в заблуждение, тут и paging и api и dto
+// Желательно что-то такое data{Local,Remote} Remote-> CatApi, CatRepository, CatClient
 @JsonClass(generateAdapter = true)
 data class CatDto(
     @Json(name = "id") val id: String,

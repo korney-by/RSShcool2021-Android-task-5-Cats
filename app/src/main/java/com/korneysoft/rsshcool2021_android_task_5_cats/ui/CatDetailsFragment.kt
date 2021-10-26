@@ -28,6 +28,9 @@ import kotlin.collections.set
 private const val TAG = "T5-CatDetailsFragment"
 
 //TODO комментарии
+// TODO фрагмент слишком много знает о том, что его не касается в частности loadSharedImage.
+// TODO Методы слишком нагруженные, невозможно прочитать и понять с первого раза за что они отвечают или их конечную цель.
+// TODO лучше отказать от статического object в сторону отдельного класса
 class CatDetailsFragment : Fragment() {
 
     private var _binding: FragmentCatDetailsBinding? = null

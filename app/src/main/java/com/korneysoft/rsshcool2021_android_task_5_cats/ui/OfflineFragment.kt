@@ -38,6 +38,7 @@ class OfflineFragment : Fragment() {
         _binding = null
     }
 
+    //TODO Naming, сокрытие истинного назначения
     private fun setToolbar() {
         (activity?.findViewById(R.id.toolbar) as Toolbar).clearExceptTitle()
     }
